@@ -1,0 +1,29 @@
+{
+  "name": "sugtext",
+  "version": "0.0.1",
+  "description": "Text completion addon for the browser",
+  "scripts": {
+    "build": "npm run build-background & npm run build-content-script",
+    "watch": "npm run watch-background & npm run watch-content-script",
+    "build-content-script": "browserify --debug js/index.js -o dist/main.js",
+    "build-background": "browserify --debug js/background.js -o dist/background.js",
+    "watch-content-script": "watchify --debug js/index.js -o dist/main.js",
+    "watch-background": "watchify --debug js/background.js -o dist/background.js",
+    "test": "tape ./test/**/*.spec.js | tap-spec"
+  },
+  "author": "Aram Drevekenin <grimsniffer@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "browserify": "^16.2.2",
+    "looks-same": "^3.3.0",
+    "puppeteer": "^1.5.0",
+    "tap-spec": "^5.0.0",
+    "tape": "^4.9.1",
+    "watchify": "^3.11.0"
+  },
+  "dependencies": {
+    "@redom/store": "~1.0.0",
+    "caret-pos": "^1.0.1",
+    "redom": "~3.12.3"
+  }
+}
