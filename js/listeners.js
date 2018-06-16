@@ -2,26 +2,42 @@ const { dispatch } = require('./dispatch')
 const { position, offset } = require('caret-pos')
 const { sendToBackground } = require('./msg-bus')
 
+function resetCursorPosition (el, position) {
+  const range = document.createRange()
+  const sel = window.getSelection()
+  range.setStart(el, position)
+  sel.removeAllRanges()
+  sel.addRange(range)
+}
+
+function insertSuggestion ({searchterm, suggestion, pos, initialText}) {
+  const wordStartPosition = searchterm
+    ? pos - searchterm.length
+    : pos
+  const textBeforeSearchterm = initialText.slice(0, wordStartPosition)
+  const textAfterSearchterm = initialText.slice(wordStartPosition + searchterm.length)
+  const contentWithCompletedWord = `${textBeforeSearchterm}${suggestion}`
+  const text = `${contentWithCompletedWord}${textAfterSearchterm}`
+  const cursorPosition = contentWithCompletedWord.length
+  return {text, cursorPosition}
+}
+
 module.exports = (store, app) => {
   return {
     onKeyDown (e) {
-      // TODO: cleanup
       if (e.key === 'Tab') {
         if (store.get('visibility') !== 'visible') return
         const { pos } = position(this)
         const searchterm = store.get('searchterm')
-        const suggestions = store.get('suggestions')
-        const wordStartPosition = searchterm ? pos - searchterm.length : pos
-        const textBeforeSearchterm = this.textContent.slice(0, wordStartPosition)
-        const textAfterSearchterm = this.textContent.slice(wordStartPosition + searchterm.length)
-        const contentWithCompletedWord = `${textBeforeSearchterm}${suggestions[0]}`
-        const fullContent = `${contentWithCompletedWord}${textAfterSearchterm}`
-        this.textContent = fullContent
-        const range = document.createRange()
-        const sel = window.getSelection()
-        range.setStart(this.firstChild, contentWithCompletedWord.length)
-        sel.removeAllRanges()
-        sel.addRange(range)
+        const [ suggestion ] = store.get('suggestions')
+        const { text, cursorPosition } = insertSuggestion({
+          searchterm,
+          suggestion,
+          pos,
+          initialText: this.textContent
+        })
+        this.textContent = text
+        resetCursorPosition(this.firstChild, cursorPosition)
         e.preventDefault()
         this.focus()
         dispatch(app, 'visibility', 'hidden')
