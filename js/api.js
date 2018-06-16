@@ -1,24 +1,22 @@
 const { listen, dispatch } = require('./dispatch')
-const textBoxListeners = require('./text-box-listeners')
+const listeners = require('./listeners')
 const observe = require('./observe-dom')
 const updateQueue = require('./update-queue')
 const Store = require('@redom/store')
 const { position, offset } = require('caret-pos')
+const { sendToBackground, observeBackground } = require('./msg-bus')
 
 module.exports = (app) => {
   const store = new Store();
   const set = updateQueue(store, app)
-  const { onKeyDown, onBlur, onKeypress } = textBoxListeners(store, app)
-  browser.runtime.onMessage.addListener(message => { // TODO: move elsewhere
-    const { suggestions } = message
-    set('visibility', 'visible')
-    set('suggestions', suggestions)
-    return Promise.resolve('foo')
-  })
+  const {
+    onKeyDown,
+    onBlur,
+    onKeypress,
+    onMsgFromBackground
+  } = listeners(store, app)
   listen(app, {
-    async search (fullText) {
-      const searchterm = fullText.split(/\s+/).pop() // TODO: get cursor position and work back from it
-      browser.runtime.sendMessage({searchterm})
+    async search (searchterm) {
       set('searchterm', searchterm)
     },
     position (off) {
@@ -28,6 +26,9 @@ module.exports = (app) => {
     },
     visibility (val) {
       set('visibility', val)
+    },
+    suggest (suggestions) {
+      set('suggestions', suggestions)
     }
   })
   observe('div[contenteditable="true"]', el => {
@@ -35,4 +36,5 @@ module.exports = (app) => {
     el.addEventListener('keydown', onKeyDown)
     el.addEventListener('blur', onBlur)
   })
+  observeBackground(onMsgFromBackground)
 }
