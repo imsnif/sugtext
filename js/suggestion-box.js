@@ -3,8 +3,7 @@ const { el, list, text } = require('redom')
 class Word {
   constructor () {
     this.el = el('li', {style: {
-      color: 'white',
-      zIndex: 10001 // might not need this?
+      color: 'white'
     }})
   }
   update (data) {
@@ -31,26 +30,17 @@ module.exports = {
           style: {
             maxWidth: "200px",
             backgroundColor: 'blue',
-            zIndex: 10000, // might not need this
-            position: 'fixed',
+            position: 'relative',
             color: 'white',
             display: 'inline-block'
-            // visibility: 'hidden'
           }
         },
         this.words
       )
     }
-    update ({suggestions, position, visibility}) {
+    update ({suggestions}) {
       if (suggestions) {
         this.words.update(suggestions)
-      }
-      if (position) {
-        this.el.style.left = position.left + "px"
-        this.el.style.top = position.top + "px"
-      }
-      if (visibility) {
-        this.el.style.visibility = visibility
       }
     }
   }

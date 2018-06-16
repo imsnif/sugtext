@@ -5,13 +5,26 @@ const { SuggestionBox } = require('./suggestion-box')
 module.exports = class App {
   constructor () {
     this.el = el('.app',
-      this.suggestionBox = new SuggestionBox(), // TODO: move to this.el
+      this.suggestionBox = new SuggestionBox(),
+      {
+        style: {
+          position: 'fixed',
+          zIndex: 10000 // TODO: dynamically
+        }
+      }
     )
     this.data = {};
   }
   update (data) {
     const { suggestions, position, visibility } = data;
-    this.suggestionBox.update({suggestions, position, visibility});
+    if (position) {
+      this.el.style.left = position.left + "px"
+      this.el.style.top = position.top + "px"
+    }
+    if (visibility) {
+      this.el.style.visibility = visibility
+    }
+    this.suggestionBox.update({suggestions});
     this.data = data;
   }
 }
