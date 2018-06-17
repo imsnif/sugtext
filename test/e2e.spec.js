@@ -124,8 +124,56 @@ test('contentEditable - ESC removes box', async t => {
     const textboxEl = await contentPage.$('#completeme')
     await textboxEl.press('Escape', {delay: 100})
     const captured = await contentPage.screenshot()
-    fs.writeFileSync(`${__dirname}/screenshots/contenteditable-esc.png`, captured)
     const truth = fs.readFileSync(`${__dirname}/screenshots/contenteditable-esc.png`)
+    const matchesScreenshot = await looksSame(truth, captured)
+    t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
+    await browser.close()
+  } catch (e) {
+    t.fail(e.message)
+  }
+})
+
+test('contentEditable - suggest completions in the middle of a text field with multiple lines', async t => {
+  t.plan(1)
+  try {
+    const { browser, contentPage } = await loadExtension('one-contenteditable-field')
+    const textboxEl = await contentPage.$('#completeme')
+    for (let i = 0; i < 3; i++) {
+      await contentPage.type('#completeme', 'foo thi bar')
+      await textboxEl.press('Enter')
+    }
+    await textboxEl.press('ArrowUp')
+    for (let i = 0; i < 5; i++) {
+      await textboxEl.press('ArrowLeft')
+    }
+    await contentPage.type('#completeme', 'a', {delay: 100})
+    const captured = await contentPage.screenshot()
+    const truth = fs.readFileSync(`${__dirname}/screenshots/contenteditable-suggest-completions-multiline.png`)
+    const matchesScreenshot = await looksSame(truth, captured)
+    t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
+    await browser.close()
+  } catch (e) {
+    t.fail(e.message)
+  }
+})
+
+test('contentEditable - complete first word when pressing TAB in the middle of a text field with multiple lines', async t => {
+  t.plan(1)
+  try {
+    const { browser, contentPage } = await loadExtension('one-contenteditable-field')
+    const textboxEl = await contentPage.$('#completeme')
+    for (let i = 0; i < 3; i++) {
+      await contentPage.type('#completeme', 'foo thi bar')
+      await textboxEl.press('Enter')
+    }
+    await textboxEl.press('ArrowUp')
+    for (let i = 0; i < 5; i++) {
+      await textboxEl.press('ArrowLeft')
+    }
+    await contentPage.type('#completeme', 'a', {delay: 100})
+    await contentPage.keyboard.press('Tab', {delay: 100})
+    const captured = await contentPage.screenshot()
+    const truth = fs.readFileSync(`${__dirname}/screenshots/contenteditable-complete-first-word-multiline.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
     await browser.close()
