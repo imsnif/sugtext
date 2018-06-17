@@ -27,17 +27,14 @@ module.exports = (store, app) => {
     onKeyDown (e) {
       if (e.key === 'Tab') {
         if (store.get('visibility') !== 'visible') return
-        const { pos } = position(this)
         const searchterm = store.get('searchterm')
         const [ suggestion ] = store.get('suggestions')
-        const { text, cursorPosition } = insertSuggestion({
-          searchterm,
-          suggestion,
-          pos,
-          initialText: this.textContent
-        })
-        this.textContent = text
-        resetCursorPosition(this.firstChild, cursorPosition)
+        const selection = window.getSelection()
+        const { anchorNode, anchorOffset } = selection
+        const re = new RegExp(`${searchterm}$`)
+        const { text, cursorPosition } = insertSuggestion({searchterm, suggestion, pos: anchorOffset, initialText: anchorNode.textContent})
+        anchorNode.textContent = text
+        resetCursorPosition(anchorNode, cursorPosition)
         e.preventDefault()
         this.focus()
         dispatch(app, 'visibility', 'hidden')
@@ -51,9 +48,9 @@ module.exports = (store, app) => {
     onKeypress (e) {
       if (/^[a-z0-9]$/i.test(e.key)) {
         const off = offset(this)
-        const { pos } = position(this)
-        const textUptoCursor = this.textContent.slice(0, pos) + e.key
-        const searchterm = textUptoCursor.split(/\s+/).pop()
+        const selection = window.getSelection()
+        const { anchorNode, anchorOffset } = selection
+        const searchterm = anchorNode.textContent.slice(0, anchorOffset).split(/\s+/).pop() + e.key
         dispatch(app, 'position', off)
         dispatch(app, 'search', searchterm)
         sendToBackground({searchterm})
