@@ -41,13 +41,15 @@ module.exports = (store, app) => {
         e.preventDefault()
         this.focus()
         dispatch(app, 'visibility', 'hidden')
+      } else {
+        dispatch(app, 'visibility', 'hidden')
       }
     },
     onBlur (e) {
       dispatch(app, 'visibility', 'hidden')
     },
     onKeypress (e) {
-      if (/^[a-z0-9]$/i.test(e.key)) { // TODO: adjust regex or find a better solution
+      if (/^[a-z0-9]$/i.test(e.key)) {
         const off = offset(this)
         const { pos } = position(this)
         const textUptoCursor = this.textContent.slice(0, pos) + e.key
