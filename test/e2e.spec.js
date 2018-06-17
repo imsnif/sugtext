@@ -82,3 +82,54 @@ test('contentEditable - complete first words when pressing TAB in the middle of 
   }
 })
 
+test('contentEditable - space causes suggestion box to disappear', async t => {
+  t.plan(1)
+  try {
+    const { browser, contentPage } = await loadExtension('one-contenteditable-field')
+    await contentPage.type('#completeme', 'thi ', {delay: 100})
+    const captured = await contentPage.screenshot()
+    const truth = fs.readFileSync(`${__dirname}/screenshots/contenteditable-space-disappears.png`)
+    const matchesScreenshot = await looksSame(truth, captured)
+    t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
+    await browser.close()
+  } catch (e) {
+    t.fail(e.message)
+  }
+})
+
+test('contentEditable - combinations cause box to disappear', async t => {
+  t.plan(1)
+  try {
+    const { browser, contentPage } = await loadExtension('one-contenteditable-field')
+    await contentPage.type('#completeme', 'thi', {delay: 100})
+    const textboxEl = await contentPage.$('#completeme')
+    await contentPage.keyboard.down('Control', {delay: 100})
+    await textboxEl.press('a', {delay: 100})
+    await contentPage.keyboard.up('Control', {delay: 100})
+    const captured = await contentPage.screenshot()
+    const truth = fs.readFileSync(`${__dirname}/screenshots/contenteditable-combination.png`)
+    const matchesScreenshot = await looksSame(truth, captured)
+    t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
+    await browser.close()
+  } catch (e) {
+    t.fail(e.message)
+  }
+})
+
+test('contentEditable - ESC removes box', async t => {
+  t.plan(1)
+  try {
+    const { browser, contentPage } = await loadExtension('one-contenteditable-field')
+    await contentPage.type('#completeme', 'thi', {delay: 100})
+    const textboxEl = await contentPage.$('#completeme')
+    await textboxEl.press('Escape', {delay: 100})
+    const captured = await contentPage.screenshot()
+    fs.writeFileSync(`${__dirname}/screenshots/contenteditable-esc.png`, captured)
+    const truth = fs.readFileSync(`${__dirname}/screenshots/contenteditable-esc.png`)
+    const matchesScreenshot = await looksSame(truth, captured)
+    t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
+    await browser.close()
+  } catch (e) {
+    t.fail(e.message)
+  }
+})
