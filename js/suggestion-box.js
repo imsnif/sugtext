@@ -3,11 +3,22 @@ const { el, list, text } = require('redom')
 class Word {
   constructor () {
     this.el = el('li', {style: {
-      color: 'white'
+      color: '#5c573e',
+      backgroundColor: '#9ba7c0',
+      borderLeft: '5px solid #9ba7c0'
     }})
   }
-  update (data) {
-    this.el.textContent = data
+  update ({word, selected}) {
+    this.el.textContent = word
+    if (selected) {
+      this.el.style.backgroundColor = '#1c2321'
+      this.el.style.borderLeft = '5px solid #1c2321'
+      this.el.style.color = '#7d98a1'
+    } else {
+      this.el.style.backgroundColor = '#7d98a1',
+      this.el.style.borderLeft = '5px solid #7d98a1'
+      this.el.style.color = '#1c2321'
+    }
   }
 }
 
@@ -19,7 +30,7 @@ module.exports = {
           style: {
             listStyleType: 'none',
             margin: 0,
-            paddingLeft: '5px'
+            paddingLeft: 0
           }
         }),
         Word
@@ -29,9 +40,7 @@ module.exports = {
         {
           style: {
             maxWidth: "200px",
-            backgroundColor: 'blue',
             position: 'relative',
-            color: 'white',
             display: 'inline-block'
           }
         },

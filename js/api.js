@@ -28,7 +28,18 @@ module.exports = (app) => {
       set('visibility', val)
     },
     suggest (suggestions) {
-      set('suggestions', suggestions)
+      set('suggestions', suggestions.map((word, i) => ({word, selected: i === 0})))
+    },
+    moveSelection (direction) {
+      const currentSuggestions = store.get('suggestions')
+      const currentSelectedIndex = currentSuggestions.findIndex(sugg => sugg.selected)
+      if (direction === 'ArrowUp') {
+        const selectedIndex = currentSelectedIndex === 0 ? currentSelectedIndex : currentSelectedIndex - 1
+        set('suggestions', currentSuggestions.map((suggestion, index) => ({word: suggestion.word, selected: index === selectedIndex})))
+      } else if (direction === 'ArrowDown') {
+        const selectedIndex = currentSelectedIndex === currentSuggestions.length ? currentSelectedIndex : currentSelectedIndex + 1
+        set('suggestions', currentSuggestions.map((suggestion, index) => ({word: suggestion.word, selected: index === selectedIndex})))
+      }
     }
   })
   observe('div[contenteditable="true"]', el => {

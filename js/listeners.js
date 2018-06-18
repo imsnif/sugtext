@@ -28,16 +28,21 @@ module.exports = (store, app) => {
       if (e.key === 'Tab') {
         if (store.get('visibility') !== 'visible') return
         const searchterm = store.get('searchterm')
-        const [ suggestion ] = store.get('suggestions')
+        const suggestions = store.get('suggestions')
+        const { word } = suggestions.find(s => s.selected)
         const selection = window.getSelection()
         const { anchorNode, anchorOffset } = selection
         const re = new RegExp(`${searchterm}$`)
-        const { text, cursorPosition } = insertSuggestion({searchterm, suggestion, pos: anchorOffset, initialText: anchorNode.textContent})
+        const { text, cursorPosition } = insertSuggestion({searchterm, suggestion: word, pos: anchorOffset, initialText: anchorNode.textContent})
         anchorNode.textContent = text
         resetCursorPosition(anchorNode, cursorPosition)
         e.preventDefault()
         this.focus()
         dispatch(app, 'visibility', 'hidden')
+      } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault()
+        this.focus()
+        dispatch(app, 'moveSelection', e.key)
       } else {
         dispatch(app, 'visibility', 'hidden')
       }
