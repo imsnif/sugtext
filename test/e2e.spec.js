@@ -23,6 +23,41 @@ test('contentEditable - suggest completions', async t => {
   }
 })
 
+test('contentEditable - can move down to next suggestion', async t => {
+  t.plan(1)
+  try {
+    const { browser, contentPage } = await loadExtension('one-contenteditable-field')
+    const textboxEl = await contentPage.$('#completeme')
+    await contentPage.type('#completeme', 'thi', {delay: 100})
+    await textboxEl.press('ArrowDown', {delay: 100})
+    const captured = await contentPage.screenshot()
+    const truth = fs.readFileSync(`${__dirname}/screenshots/contenteditable-suggest-completions-movedown.png`)
+    const matchesScreenshot = await looksSame(truth, captured)
+    t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
+    await browser.close()
+  } catch (e) {
+    t.fail(e.message)
+  }
+})
+
+test('contentEditable - can move up to previous suggestion', async t => {
+  t.plan(1)
+  try {
+    const { browser, contentPage } = await loadExtension('one-contenteditable-field')
+    const textboxEl = await contentPage.$('#completeme')
+    await contentPage.type('#completeme', 'thi', {delay: 100})
+    await textboxEl.press('ArrowDown', {delay: 100})
+    await textboxEl.press('ArrowUp', {delay: 100})
+    const captured = await contentPage.screenshot()
+    const truth = fs.readFileSync(`${__dirname}/screenshots/contenteditable-suggest-completions-moveup.png`)
+    const matchesScreenshot = await looksSame(truth, captured)
+    t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
+    await browser.close()
+  } catch (e) {
+    t.fail(e.message)
+  }
+})
+
 test('contentEditable - suggest completions in the middle of a text field', async t => {
   t.plan(1)
   try {
@@ -44,7 +79,7 @@ test('contentEditable - suggest completions in the middle of a text field', asyn
   }
 })
 
-test('contentEditable - complete first words when pressing TAB', async t => {
+test('contentEditable - complete first word when pressing TAB', async t => {
   t.plan(1)
   try {
     const { browser, contentPage } = await loadExtension('one-contenteditable-field')
@@ -53,6 +88,24 @@ test('contentEditable - complete first words when pressing TAB', async t => {
     await contentPage.keyboard.press('Tab')
     const captured = await contentPage.screenshot()
     const truth = fs.readFileSync(`${__dirname}/screenshots/contenteditable-complete-first-word.png`)
+    const matchesScreenshot = await looksSame(truth, captured)
+    t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
+    await browser.close()
+  } catch (e) {
+    t.fail(e.message)
+  }
+})
+
+test('contentEditable - complete second first word when pressing down and then TAB', async t => {
+  t.plan(1)
+  try {
+    const { browser, contentPage } = await loadExtension('one-contenteditable-field')
+    const textboxEl = await contentPage.$('#completeme')
+    await contentPage.type('#completeme', 'thia', {delay: 100})
+    await textboxEl.press('ArrowDown', {delay: 100})
+    await contentPage.keyboard.press('Tab', {delay: 100})
+    const captured = await contentPage.screenshot()
+    const truth = fs.readFileSync(`${__dirname}/screenshots/contenteditable-complete-second-word.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
     await browser.close()
