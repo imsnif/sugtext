@@ -54,10 +54,10 @@ module.exports = (app) => {
       const currentSuggestions = store.get('suggestions')
       const currentSelectedIndex = currentSuggestions.findIndex(sugg => sugg.selected)
       if (direction === 'ArrowUp') {
-        const selectedIndex = currentSelectedIndex === 0 ? currentSelectedIndex : currentSelectedIndex - 1
+        const selectedIndex = currentSelectedIndex === 0 ? currentSuggestions.length - 1 : currentSelectedIndex - 1
         set('suggestions', currentSuggestions.map((suggestion, index) => ({word: suggestion.word, selected: index === selectedIndex})))
       } else if (direction === 'ArrowDown') {
-        const selectedIndex = currentSelectedIndex === currentSuggestions.length ? currentSelectedIndex : currentSelectedIndex + 1
+        const selectedIndex = currentSelectedIndex === currentSuggestions.length - 1 ? 0 : currentSelectedIndex + 1
         set('suggestions', currentSuggestions.map((suggestion, index) => ({word: suggestion.word, selected: index === selectedIndex})))
       }
     }
