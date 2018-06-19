@@ -15,16 +15,19 @@ module.exports = class App {
     )
     this.data = {};
   }
+  getBoundingClientRect () {
+    return this.el.getBoundingClientRect()
+  }
   update (data) {
     const { suggestions, position, visibility } = data;
+    this.suggestionBox.update({suggestions});
     if (position) {
-      this.el.style.left = position.left + "px"
-      this.el.style.top = position.top + "px"
+      this.el.style.left = position.left
+      this.el.style.top = position.top
     }
     if (visibility) {
       this.el.style.visibility = visibility
     }
-    this.suggestionBox.update({suggestions});
     this.data = data;
   }
 }

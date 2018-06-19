@@ -20,15 +20,35 @@ module.exports = (app) => {
       set('searchterm', searchterm)
     },
     position (off) {
-      const left = Number(off.left)
-      const top = Number(off.top + off.height)
-      set('position', {left, top})
+      const { clientWidth, clientHeight } = document.body
+      const appRect = app.getBoundingClientRect()
+      const inverseHorizontal = (off.left + appRect.width) >= clientWidth
+      const inverseVertical = (off.top + off.height + appRect.height) >= clientHeight
+      const pos = {
+        left: inverseHorizontal
+          ? clientWidth - appRect.width
+          : off.left,
+        top: inverseVertical
+          ? off.top - appRect.height
+          : off.top + off.height
+      }
+      set('position', pos)
+      set('inverseSelection', inverseVertical)
     },
     visibility (val) {
       set('visibility', val)
     },
     suggest (suggestions) {
-      set('suggestions', suggestions.map((word, i) => ({word, selected: i === 0})))
+      const inverseSelection = store.get('inverseSelection')
+      if (inverseSelection) {
+        set('suggestions', 
+          Array.from(suggestions)
+          .reverse()
+          .map((word, i) => ({word, selected: i === suggestions.length - 1}))
+        )
+      } else {
+        set('suggestions', suggestions.map((word, i) => ({word, selected: i === 0})))
+      }
     },
     moveSelection (direction) {
       const currentSuggestions = store.get('suggestions')
