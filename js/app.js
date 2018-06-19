@@ -22,8 +22,8 @@ module.exports = class App {
     const { suggestions, position, visibility } = data;
     this.suggestionBox.update({suggestions});
     if (position) {
-      this.el.style.left = position.left
-      this.el.style.top = position.top
+      this.el.style.left = Number(position.left) + "px"
+      this.el.style.top = Number(position.top) + "px"
     }
     if (visibility) {
       this.el.style.visibility = visibility
