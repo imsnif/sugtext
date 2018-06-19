@@ -234,3 +234,40 @@ test('contentEditable - complete first word when pressing TAB in the middle of a
     t.fail(e.message)
   }
 })
+
+test('contentEditable - suggestion box respects horizontal screen border', async t => {
+  t.plan(1)
+  try {
+    const { browser, contentPage } = await loadExtension('one-contenteditable-field')
+    await contentPage.setViewport({width: 200, height: 500})
+    const textboxEl = await contentPage.$('#completeme')
+    await textboxEl.type('I am some text that will overflow thia', {delay: 100})
+    const captured = await contentPage.screenshot()
+    const truth = fs.readFileSync(`${__dirname}/screenshots/contenteditable-suggest-overflow-horizontal.png`)
+    const matchesScreenshot = await looksSame(truth, captured)
+    t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
+    await browser.close()
+  } catch (e) {
+    t.fail(e.message)
+  }
+})
+
+test('contentEditable - suggestion box respects vertical screen border (with inverse selection)', async t => {
+  t.plan(1)
+  try {
+    const { browser, contentPage } = await loadExtension('one-contenteditable-field')
+    await contentPage.setViewport({width: 200, height: 200})
+    const textboxEl = await contentPage.$('#completeme')
+    for (let i = 0; i < 5; i++) {
+      await textboxEl.press('Enter')
+    }
+    await textboxEl.type('thia', {delay: 100})
+    const captured = await contentPage.screenshot()
+    const truth = fs.readFileSync(`${__dirname}/screenshots/contenteditable-suggest-overflow-vertical.png`)
+    const matchesScreenshot = await looksSame(truth, captured)
+    t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
+    await browser.close()
+  } catch (e) {
+    t.fail(e.message)
+  }
+})
