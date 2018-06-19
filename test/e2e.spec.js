@@ -192,12 +192,12 @@ test('contentEditable - suggest completions in the middle of a text field with m
     const { browser, contentPage } = await loadExtension('one-contenteditable-field')
     const textboxEl = await contentPage.$('#completeme')
     for (let i = 0; i < 3; i++) {
-      await textboxEl.type('foo thi bar')
-      await textboxEl.press('Enter')
+      await textboxEl.type('foo thi bar', {delay: 100})
+      await textboxEl.press('Enter', {delay: 100})
     }
-    await textboxEl.press('ArrowUp')
+    await textboxEl.press('ArrowUp', {delay: 100})
     for (let i = 0; i < 5; i++) {
-      await textboxEl.press('ArrowLeft')
+      await textboxEl.press('ArrowLeft', {delay: 100})
     }
     await textboxEl.type('a', {delay: 100})
     const captured = await contentPage.screenshot()

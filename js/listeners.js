@@ -40,6 +40,7 @@ module.exports = (store, app) => {
         this.focus()
         dispatch(app, 'visibility', 'hidden')
       } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        if (store.get('visibility') !== 'visible') return
         e.preventDefault()
         this.focus()
         dispatch(app, 'moveSelection', e.key)
