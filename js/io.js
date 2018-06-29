@@ -1,17 +1,25 @@
 const { curry } = require('ramda')
-const { IO } = require('monet')
+const { Right, Left } = require('monet')
 const { offset } = require('caret-pos')
 const { sendToBackground } = require('./msg-bus')
 
 const { dispatch } = require('./dispatch')
 
+const tryCatchify = effect => {
+  try {
+    return Right(effect())
+  } catch (e) {
+    return Left(e)
+  }
+}
+
 module.exports = {
-  getWindowSelectionIO: () => IO(() => window.getSelection()),
+  getWindowSelectionIO: () => tryCatchify(window.getSelection),
   getFromStoreIO: curry((store, key) => {
-    return IO(() => store.get(key))
+    return tryCatchify(() => store.get(key))
   }),
-  getCursorOffsetIO: el => IO(() => offset(el)),
-  updateTextNodeIO: curry((text, pos, selection) => IO(() => {
+  getCursorOffsetIO: el => tryCatchify(() => offset(el)),
+  updateTextNodeIO: curry((text, pos, selection) => tryCatchify(() => {
     const range = document.createRange()
     const { anchorNode } = selection
     anchorNode.textContent = text
@@ -19,10 +27,10 @@ module.exports = {
     selection.removeAllRanges()
     selection.addRange(range)
   })),
-  focusEventTargetIO: e => IO(() => {
+  focusEventTargetIO: e => tryCatchify(() => {
     e.preventDefault()
     e.target.focus()
   }),
-  dispatchActionIO: curry((app, key, val) => IO(() => dispatch(app, key, val))),
-  sendToBackgroundIO: msg => IO(() => sendToBackground(msg))
+  dispatchActionIO: curry((app, key, val) => tryCatchify(() => dispatch(app, key, val))),
+  sendToBackgroundIO: msg => tryCatchify(() => sendToBackground(msg))
 }

@@ -33,8 +33,8 @@ module.exports = {
   focusEventTarget: curry((e, ctx) => {
     return returnCtx(focusEventTargetIO(e), ctx)
   }),
-  dispatchAction: curry((app, type, val) => {
-    return returnCtx(dispatchActionIO(app, type, val))
+  dispatchAction: curry((app, type, val, ctx) => {
+    return returnCtx(dispatchActionIO(app, type, val), ctx)
   }),
   dispatchSearchterm: curry((app, ctx) => {
     const dispatch = dispatchActionIO(app, 'search', ctx.searchterm)

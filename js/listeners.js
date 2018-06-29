@@ -12,7 +12,9 @@ const {
   sendSearchtermToBackground
 } = require('./transforms')
 const { formatText, findNewCursorPos, findSearchterm } = require('./formatters')
+
 const initCtx = Identity
+const noop = () => {}
 
 module.exports = (store, app) => {
   const getFromStore = getStoreKeyValue(store)
@@ -33,18 +35,22 @@ module.exports = (store, app) => {
           .chain(updateTextNode)
           .chain(focusEventTarget(e))
           .chain(hideBox)
-          .run()
+          .cata(console.error, noop)
       } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
         initCtx({})
           .chain(focusEventTarget(e))
           .chain(moveSelection(e.key))
-          .run()
+          .cata(console.error, noop)
       } else {
-        initCtx({}).chain(hideBox).run()
+        initCtx({})
+          .chain(hideBox)
+          .cata(console.error, noop)
       }
     },
     onBlur (e) {
-      initCtx({}).chain(hideBox).run()
+      initCtx({})
+        .chain(hideBox)
+        .cata(console.error, noop)
     },
     onKeypress (e) {
       if (/^[a-z0-9]$/i.test(e.key)) {
@@ -55,14 +61,14 @@ module.exports = (store, app) => {
           .chain(dispatchPosition(app))
           .chain(dispatchSearchterm(app))
           .chain(sendSearchtermToBackground)
-          .run()
+          .cata(console.error, noop)
       }
     },
     onMsgFromBackground ({suggestions}) {
       initCtx({})
         .chain(showBox)
         .chain(updateSuggestions(suggestions))
-        .run()
+        .cata(console.error, noop)
     }
   }
 }
