@@ -24,6 +24,8 @@
   "dependencies": {
     "@redom/store": "~1.0.0",
     "caret-pos": "^1.0.1",
+    "monet": "^0.8.10",
+    "ramda": "^0.25.0",
     "redom": "~3.12.3"
   }
 }

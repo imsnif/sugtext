@@ -1,70 +1,68 @@
-const { dispatch } = require('./dispatch')
-const { position, offset } = require('caret-pos')
-const { sendToBackground } = require('./msg-bus')
+const { Identity } = require('monet')
 
-function resetCursorPosition (el, position) {
-  const range = document.createRange()
-  const sel = window.getSelection()
-  range.setStart(el, position)
-  sel.removeAllRanges()
-  sel.addRange(range)
-}
-
-function insertSuggestion ({searchterm, suggestion, pos, initialText}) {
-  const wordStartPosition = searchterm
-    ? pos - searchterm.length
-    : pos
-  const textBeforeSearchterm = initialText.slice(0, wordStartPosition)
-  const textAfterSearchterm = initialText.slice(wordStartPosition + searchterm.length)
-  const contentWithCompletedWord = `${textBeforeSearchterm}${suggestion}`
-  const text = `${contentWithCompletedWord}${textAfterSearchterm}`
-  const cursorPosition = contentWithCompletedWord.length
-  return {text, cursorPosition}
-}
+const {
+  getStoreKeyValue,
+  getWindowSelection,
+  getCursorOffset,
+  updateTextNode,
+  focusEventTarget,
+  dispatchAction,
+  dispatchSearchterm,
+  dispatchPosition,
+  sendSearchtermToBackground
+} = require('./transforms')
+const { formatText, findNewCursorPos, findSearchterm } = require('./formatters')
+const initCtx = Identity
 
 module.exports = (store, app) => {
+  const getFromStore = getStoreKeyValue(store)
+  const hideBox = dispatchAction(app, 'visibility', 'hidden')
+  const showBox = dispatchAction(app, 'visibility', 'visible')
+  const updateSuggestions = dispatchAction(app, 'suggest')
+  const moveSelection = dispatchAction(app, 'moveSelection')
   return {
     onKeyDown (e) {
+      if (store.get('visibility') !== 'visible') return
       if (e.key === 'Tab') {
-        if (store.get('visibility') !== 'visible') return
-        const searchterm = store.get('searchterm')
-        const suggestions = store.get('suggestions')
-        const { word } = suggestions.find(s => s.selected)
-        const selection = window.getSelection()
-        const { anchorNode, anchorOffset } = selection
-        const re = new RegExp(`${searchterm}$`)
-        const { text, cursorPosition } = insertSuggestion({searchterm, suggestion: word, pos: anchorOffset, initialText: anchorNode.textContent})
-        anchorNode.textContent = text
-        resetCursorPosition(anchorNode, cursorPosition)
-        e.preventDefault()
-        this.focus()
-        dispatch(app, 'visibility', 'hidden')
+        initCtx({})
+          .chain(getFromStore('searchterm'))
+          .chain(getFromStore('suggestions'))
+          .chain(getWindowSelection)
+          .map(formatText)
+          .map(findNewCursorPos)
+          .chain(updateTextNode)
+          .chain(focusEventTarget(e))
+          .chain(hideBox)
+          .run()
       } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-        if (store.get('visibility') !== 'visible') return
-        e.preventDefault()
-        this.focus()
-        dispatch(app, 'moveSelection', e.key)
+        initCtx({})
+          .chain(focusEventTarget(e))
+          .chain(moveSelection(e.key))
+          .run()
       } else {
-        dispatch(app, 'visibility', 'hidden')
+        initCtx({}).chain(hideBox).run()
       }
     },
     onBlur (e) {
-      dispatch(app, 'visibility', 'hidden')
+      initCtx({}).chain(hideBox).run()
     },
     onKeypress (e) {
       if (/^[a-z0-9]$/i.test(e.key)) {
-        const off = offset(this)
-        const selection = window.getSelection()
-        const { anchorNode, anchorOffset } = selection
-        const searchterm = anchorNode.textContent.slice(0, anchorOffset).split(/\s+/).pop() + e.key
-        dispatch(app, 'position', off)
-        dispatch(app, 'search', searchterm)
-        sendToBackground({searchterm})
+        initCtx({})
+          .chain(getCursorOffset(e))
+          .chain(getWindowSelection)
+          .map(findSearchterm(e.key))
+          .chain(dispatchPosition(app))
+          .chain(dispatchSearchterm(app))
+          .chain(sendSearchtermToBackground)
+          .run()
       }
     },
     onMsgFromBackground ({suggestions}) {
-      dispatch(app, 'visibility', 'visible')
-      dispatch(app, 'suggest', suggestions)
+      initCtx({})
+        .chain(showBox)
+        .chain(updateSuggestions(suggestions))
+        .run()
     }
   }
 }
