@@ -10,7 +10,7 @@ const style = {
 
 module.exports = class App {
   constructor () {
-    this.suggestionBox = new SuggestionBox()
+    this.suggestionBox = SuggestionBox()
     this.el = el(className,
       this.suggestionBox,
       {style}
@@ -28,7 +28,7 @@ module.exports = class App {
   }
   update (data) {
     const { suggestions, position, visibility } = data
-    this.suggestionBox.update({suggestions})
+    if (suggestions) this.suggestionBox.update(suggestions)
     if (position) this._updatePosition(position)
     if (visibility) this._updateVisibility(visibility)
   }
