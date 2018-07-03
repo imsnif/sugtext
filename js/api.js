@@ -1,12 +1,12 @@
 const { Identity } = require('monet')
 
-const { listen, dispatch } = require('./dispatch')
+const { listen, dispatch } = require('./util/dispatch')
 const listeners = require('./listeners')
-const observe = require('./observe-dom')
-const updateQueue = require('./update-queue')
+const observe = require('./util/observe-dom')
+const updateQueue = require('./util/update-queue')
 const Store = require('@redom/store')
 const { position, offset } = require('caret-pos')
-const { sendToBackground, observeBackground } = require('./msg-bus')
+const { sendToBackground, observeBackground } = require('./util/msg-bus')
 
 const {
   getStoreKeyValue,
@@ -14,14 +14,14 @@ const {
   updateState,
   updateStateFromCtx,
   getAppSize
-} = require('./transforms')
+} = require('./pipeline/transforms')
 const {
   formatSuggestions,
   findNewSelectedSuggestions,
   calcBoxHorizontalInverse,
   calcBoxVerticalInverse,
   calcBoxPos
-} = require('./formatters')
+} = require('./pipeline/formatters')
 
 const initCtx = Identity
 const noop = () => {}

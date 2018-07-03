@@ -1,5 +1,5 @@
 const { mount } = require('redom')
-const App = require('./app')
+const App = require('./components/app')
 const api = require('./api')
 
 const app = new App();

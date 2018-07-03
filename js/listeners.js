@@ -10,8 +10,8 @@ const {
   dispatchSearchterm,
   dispatchPosition,
   sendSearchtermToBackground
-} = require('./transforms')
-const { formatText, findNewCursorPos, findSearchterm } = require('./formatters')
+} = require('./pipeline/transforms')
+const { formatText, findNewCursorPos, findSearchterm } = require('./pipeline/formatters')
 
 const initCtx = Identity
 const noop = () => {}

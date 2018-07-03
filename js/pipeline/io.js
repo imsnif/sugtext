@@ -1,10 +1,10 @@
 const { curry } = require('ramda')
 const { Right, Left } = require('monet')
 const { offset } = require('caret-pos')
-const { sendToBackground } = require('./msg-bus')
-const updateQueue = require('./update-queue')
+const { sendToBackground } = require('../util/msg-bus')
+const updateQueue = require('../util/update-queue')
 
-const { dispatch } = require('./dispatch')
+const { dispatch } = require('../util/dispatch')
 
 const tryCatchify = effect => {
   try {
