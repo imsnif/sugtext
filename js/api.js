@@ -1,3 +1,5 @@
+const { Identity } = require('monet')
+
 const { listen, dispatch } = require('./dispatch')
 const listeners = require('./listeners')
 const observe = require('./observe-dom')
@@ -6,9 +8,30 @@ const Store = require('@redom/store')
 const { position, offset } = require('caret-pos')
 const { sendToBackground, observeBackground } = require('./msg-bus')
 
+const {
+  getStoreKeyValue,
+  getClientSize,
+  updateState,
+  updateStateFromCtx,
+  getAppSize
+} = require('./transforms')
+const {
+  formatSuggestions,
+  findNewSelectedSuggestions,
+  calcBoxHorizontalInverse,
+  calcBoxVerticalInverse,
+  calcBoxPos
+} = require('./formatters')
+
+const initCtx = Identity
+const noop = () => {}
+
 module.exports = (app) => {
   const store = new Store();
   const set = updateQueue(store, app)
+  const updateAppState = updateState(store, app)
+  const updateAppStateFromCtx = updateStateFromCtx(store, app)
+  const getFromStore = getStoreKeyValue(store)
   const {
     onKeyDown,
     onBlur,
@@ -17,49 +40,39 @@ module.exports = (app) => {
   } = listeners(store, app)
   listen(app, {
     async search (searchterm) {
-      set('searchterm', searchterm)
+      initCtx({})
+        .chain(updateAppState('searchterm', searchterm))
+        .cata(console.error, noop)
     },
     position (off) {
-      const { clientWidth, clientHeight } = document.body
-      const appRect = app.getBoundingClientRect()
-      const inverseHorizontal = (off.left + appRect.width) >= clientWidth
-      const inverseVertical = (off.top + off.height + appRect.height) >= clientHeight
-      const pos = {
-        left: inverseHorizontal
-          ? clientWidth - appRect.width
-          : off.left,
-        top: inverseVertical
-          ? off.top - appRect.height
-          : off.top + off.height
-      }
-      set('position', pos)
-      set('inverseSelection', inverseVertical)
+      initCtx({})
+        .chain(getClientSize)
+        .chain(getAppSize(app))
+        .map(calcBoxHorizontalInverse(off))
+        .map(calcBoxVerticalInverse(off))
+        .map(calcBoxPos(off))
+        .chain(updateAppStateFromCtx('boxPos', 'position'))
+        .chain(updateAppStateFromCtx('inverseVertical', 'inverseSelection'))
+        .cata(console.error, noop)
     },
     visibility (val) {
-      set('visibility', val)
+      initCtx({})
+        .chain(updateAppState('visibility', val))
+        .cata(console.error, noop)
     },
     suggest (suggestions) {
-      const inverseSelection = store.get('inverseSelection')
-      if (inverseSelection) {
-        set('suggestions', 
-          Array.from(suggestions)
-          .reverse()
-          .map((word, i) => ({word, selected: i === suggestions.length - 1}))
-        )
-      } else {
-        set('suggestions', suggestions.map((word, i) => ({word, selected: i === 0})))
-      }
+      initCtx({})
+        .chain(getFromStore('inverseSelection'))
+        .map(formatSuggestions(suggestions))
+        .chain(updateAppStateFromCtx('orderedSuggestions', 'suggestions'))
+        .cata(console.error, noop)
     },
     moveSelection (direction) {
-      const currentSuggestions = store.get('suggestions')
-      const currentSelectedIndex = currentSuggestions.findIndex(sugg => sugg.selected)
-      if (direction === 'ArrowUp') {
-        const selectedIndex = currentSelectedIndex === 0 ? currentSuggestions.length - 1 : currentSelectedIndex - 1
-        set('suggestions', currentSuggestions.map((suggestion, index) => ({word: suggestion.word, selected: index === selectedIndex})))
-      } else if (direction === 'ArrowDown') {
-        const selectedIndex = currentSelectedIndex === currentSuggestions.length - 1 ? 0 : currentSelectedIndex + 1
-        set('suggestions', currentSuggestions.map((suggestion, index) => ({word: suggestion.word, selected: index === selectedIndex})))
-      }
+      initCtx({})
+        .chain(getFromStore('suggestions'))
+        .map(findNewSelectedSuggestions(direction))
+        .chain(updateAppStateFromCtx('selectedSuggestions', 'suggestions'))
+        .cata(console.error, noop)
     }
   })
   observe('div[contenteditable="true"]', el => {
