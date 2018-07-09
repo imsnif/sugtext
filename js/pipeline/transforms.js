@@ -1,4 +1,4 @@
-const { Left } = require('monet')
+const { Left, Right, Identity } = require('monet')
 const { curry, merge } = require('ramda')
 
 const {
@@ -11,7 +11,9 @@ const {
   focusEventTargetIO,
   dispatchActionIO ,
   sendToBackgroundIO,
-  updateStateIO
+  updateStateIO,
+  waitForEventLoopIO,
+  updateCursorPositionIO
 } = require('./io')
 
 const readToCtx = curry((ioAction, key, ctx) => {
@@ -31,15 +33,15 @@ module.exports = {
   getAppSize: curry((app, ctx) => {
     return readToCtx(getAppSizeIO(app), 'appSize', ctx)
   }),
-  getCursorOffset: curry((event, ctx) => {
-    const getOffsetVal = getCursorOffsetIO(event.target)
+  getCursorOffset: curry((app, event, ctx) => {
+    const getOffsetVal = getCursorOffsetIO(app, event.target)
     return readToCtx(getOffsetVal, 'offset', ctx)
   }),
-  updateTextNode: ctx => {
-    const { text, pos, selection } = ctx
-    const update = updateTextNodeIO(text, pos, selection)
+  updateTextNode: curry((app, ctx) => {
+    const { textToInsert, pos } = ctx
+    const update = updateTextNodeIO(app, pos, textToInsert)
     return returnCtx(update, ctx)
-  },
+  }),
   focusEventTarget: curry((e, ctx) => {
     return returnCtx(focusEventTargetIO(e), ctx)
   }),
@@ -66,5 +68,8 @@ module.exports = {
     const { searchterm } = ctx
     const send = sendToBackgroundIO({searchterm})
     return returnCtx(send, ctx)
-  }
+  },
+  updateCursorPosition: curry((pos, ctx) => {
+    return returnCtx(updateCursorPositionIO(pos, ctx.selection), ctx)
+  })
 }

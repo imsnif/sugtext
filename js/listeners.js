@@ -9,9 +9,10 @@ const {
   dispatchAction,
   dispatchSearchterm,
   dispatchPosition,
-  sendSearchtermToBackground
+  sendSearchtermToBackground,
+  waitForEventLoop,
 } = require('./pipeline/transforms')
-const { formatText, findNewCursorPos, findSearchterm } = require('./pipeline/formatters')
+const { findTextToInsert, findNewCursorPos, findSearchterm } = require('./pipeline/formatters')
 
 const initCtx = Identity
 const noop = () => {}
@@ -30,9 +31,9 @@ module.exports = (store, app) => {
           .chain(getFromStore('searchterm'))
           .chain(getFromStore('suggestions'))
           .chain(getWindowSelection)
-          .map(formatText)
+          .map(findTextToInsert)
           .map(findNewCursorPos)
-          .chain(updateTextNode)
+          .chain(updateTextNode(app))
           .chain(focusEventTarget(e))
           .chain(hideBox)
           .cata(console.error, noop)
@@ -48,14 +49,16 @@ module.exports = (store, app) => {
       }
     },
     onBlur (e) {
-      initCtx({})
-        .chain(hideBox)
-        .cata(console.error, noop)
+      process.nextTick(() => {
+        initCtx({})
+          .chain(hideBox)
+          .cata(console.error, noop)
+      })
     },
     onKeypress (e) {
       if (/^[a-z0-9]$/i.test(e.key)) {
         initCtx({})
-          .chain(getCursorOffset(e))
+          .chain(getCursorOffset(app, e))
           .chain(getWindowSelection)
           .map(findSearchterm(e.key))
           .chain(dispatchPosition(app))

@@ -20,8 +20,8 @@ module.exports = class App {
     return this.el.getBoundingClientRect()
   }
   _updatePosition (position) {
-    this.el.style.left = `${position.left}px`
-    this.el.style.top = `${position.top}px`
+    this.el.style.left = `${Number(position.left)}px`
+    this.el.style.top = `${Number(position.top)}px`
   }
   _updateVisibility (visibility) {
     this.el.style.visibility = visibility

@@ -9,12 +9,16 @@ const {
 const {
   replaceSearchterm,
   calculateCursorPosition,
-  lastWordUpToCursor
+  lastWordUpToCursor,
+  extractChosenWord
 } = require('./text-manipulation')
 
 module.exports = {
-  formatText: ctx => {
-    return merge(ctx, {text: replaceSearchterm(ctx.searchterm, ctx.suggestions, ctx.selection)})
+  findTextToInsert: ctx => {
+    const chosenWord = extractChosenWord(ctx.suggestions)
+    const { searchterm } = ctx
+    const re = new RegExp('^' + searchterm)
+    return merge(ctx, {textToInsert: chosenWord.replace(re, '')})
   },
   formatSuggestions: curry((suggestions, ctx) => {
     const orderedSuggestions = ctx.inverseSelection

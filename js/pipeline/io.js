@@ -26,11 +26,18 @@ module.exports = {
   getFromStoreIO: curry((store, key) => {
     return tryCatchify(() => store.get(key))
   }),
-  getCursorOffsetIO: el => tryCatchify(() => offset(el)),
-  updateTextNodeIO: curry((text, pos, selection) => tryCatchify(() => {
+  getCursorOffsetIO: curry((app, el) => tryCatchify(() => {
+    const { anchorOffset } = window.getSelection()
+    process.nextTick(() => dispatch(app, 'setCursorPos', anchorOffset + 1))
+    return offset(el)
+  })),
+  updateTextNodeIO: curry((app, pos, textToInsert) => tryCatchify(() => {
+    document.execCommand('insertText', false, textToInsert)
+    process.nextTick(() => dispatch(app, 'setCursorPos', pos))
+  })),
+  updateCursorPositionIO: curry((pos, selection) => tryCatchify(() => {
     const range = document.createRange()
     const { anchorNode } = selection
-    anchorNode.textContent = text
     range.setStart(anchorNode, pos)
     selection.removeAllRanges()
     selection.addRange(range)

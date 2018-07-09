@@ -13,7 +13,9 @@ const {
   getClientSize,
   updateState,
   updateStateFromCtx,
-  getAppSize
+  getAppSize,
+  getWindowSelection,
+  updateCursorPosition
 } = require('./pipeline/transforms')
 const {
   formatSuggestions,
@@ -39,7 +41,7 @@ module.exports = (app) => {
     onMsgFromBackground
   } = listeners(store, app)
   listen(app, {
-    async search (searchterm) {
+    search (searchterm) {
       initCtx({})
         .chain(updateAppState('searchterm', searchterm))
         .cata(console.error, noop)
@@ -73,12 +75,18 @@ module.exports = (app) => {
         .map(findNewSelectedSuggestions(direction))
         .chain(updateAppStateFromCtx('selectedSuggestions', 'suggestions'))
         .cata(console.error, noop)
+    },
+    setCursorPos (pos) {
+      initCtx({})
+        .chain(getWindowSelection)
+        .chain(updateCursorPosition(pos))
+        .cata(console.error, noop)
     }
   })
   observe('div[contenteditable="true"]', el => {
+    el.addEventListener('blur', onBlur)
     el.addEventListener('keypress', onKeypress)
     el.addEventListener('keydown', onKeyDown)
-    el.addEventListener('blur', onBlur)
   })
   observeBackground(onMsgFromBackground)
 }
