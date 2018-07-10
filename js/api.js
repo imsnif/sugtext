@@ -76,14 +76,14 @@ module.exports = (app) => {
         .chain(updateAppStateFromCtx('selectedSuggestions', 'suggestions'))
         .cata(console.error, noop)
     },
-    setCursorPos (pos) {
+    setCursorPos ({pos, el = false}) { // TODO: move this to be a listener on the element
       initCtx({})
         .chain(getWindowSelection)
-        .chain(updateCursorPosition(pos))
+        .chain(updateCursorPosition(pos, el))
         .cata(console.error, noop)
     }
   })
-  observe('div[contenteditable="true"]', el => {
+  observe('div[contenteditable="true"],textarea', el => {
     el.addEventListener('blur', onBlur)
     el.addEventListener('keypress', onKeypress)
     el.addEventListener('keydown', onKeyDown)

@@ -1,20 +1,28 @@
-const { Left, Right, Identity } = require('monet')
+const { Left } = require('monet')
 const { curry, merge } = require('ramda')
 
 const {
   getWindowSelectionIO,
+  getSelectedTextareaCurPosIO,
+  getCurrentTextareaTextIO,
   getClientSizeIO,
   getAppSizeIO,
   getFromStoreIO,
   getCursorOffsetIO,
-  updateTextNodeIO,
+  updateContentEditableNodeIO,
+  updateTextareaNodeIO,
   focusEventTargetIO,
-  dispatchActionIO ,
+  dispatchActionIO,
   sendToBackgroundIO,
   updateStateIO,
-  waitForEventLoopIO,
-  updateCursorPositionIO
+  updateCursorPositionInTextareaIO,
+  updateCursorPositionInSelectionIO
 } = require('./io')
+
+const {
+  getTextFromSelection,
+  getPosFromSelection
+} = require('./arrange-data')
 
 const readToCtx = curry((ioAction, key, ctx) => {
   return ioAction.map(val => merge(ctx, {[key]: val}))
@@ -27,6 +35,20 @@ module.exports = {
     return readToCtx(readVal, key, ctx)
   }),
   getWindowSelection: ctx => readToCtx(getWindowSelectionIO(), 'selection', ctx),
+  getCurrentCursorPos: curry((el, ctx) => {
+    const { selection } = ctx
+    const getPosition = el.type === 'textarea'
+      ? getSelectedTextareaCurPosIO(el)
+      : getPosFromSelection(selection)
+    return readToCtx(getPosition, 'initCurPos', ctx)
+  }),
+  getCurrentText: curry((el, ctx) => {
+    const { selection } = ctx
+    const getText = el.type === 'textarea'
+      ? getCurrentTextareaTextIO(el)
+      : getTextFromSelection(selection)
+    return readToCtx(getText, 'initText', ctx)
+  }),
   getClientSize: ctx => {
     return readToCtx(getClientSizeIO(), 'clientSize', ctx)
   },
@@ -34,12 +56,15 @@ module.exports = {
     return readToCtx(getAppSizeIO(app), 'appSize', ctx)
   }),
   getCursorOffset: curry((app, event, ctx) => {
-    const getOffsetVal = getCursorOffsetIO(app, event.target)
+    const { initCurPos } = ctx
+    const getOffsetVal = getCursorOffsetIO(app, event.target, initCurPos.end)
     return readToCtx(getOffsetVal, 'offset', ctx)
   }),
-  updateTextNode: curry((app, ctx) => {
-    const { textToInsert, pos } = ctx
-    const update = updateTextNodeIO(app, pos, textToInsert)
+  updateTextNode: curry((app, el, ctx) => {
+    const { textToInsert, initCurPos, pos } = ctx
+    const update = el.type === 'textarea'
+      ? updateTextareaNodeIO(app, el, initCurPos, pos, textToInsert)
+      : updateContentEditableNodeIO(app, pos, textToInsert)
     return returnCtx(update, ctx)
   }),
   focusEventTarget: curry((e, ctx) => {
@@ -69,7 +94,11 @@ module.exports = {
     const send = sendToBackgroundIO({searchterm})
     return returnCtx(send, ctx)
   },
-  updateCursorPosition: curry((pos, ctx) => {
-    return returnCtx(updateCursorPositionIO(pos, ctx.selection), ctx)
+  updateCursorPosition: curry((pos, el, ctx) => {
+    const { selection } = ctx
+    const update = el && el.type === 'textarea'
+      ? updateCursorPositionInTextareaIO(pos, el)
+      : updateCursorPositionInSelectionIO(pos, selection)
+    return returnCtx(update, ctx)
   })
 }

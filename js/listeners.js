@@ -3,6 +3,8 @@ const { Identity } = require('monet')
 const {
   getStoreKeyValue,
   getWindowSelection,
+  getCurrentCursorPos,
+  getCurrentText,
   getCursorOffset,
   updateTextNode,
   focusEventTarget,
@@ -31,9 +33,10 @@ module.exports = (store, app) => {
           .chain(getFromStore('searchterm'))
           .chain(getFromStore('suggestions'))
           .chain(getWindowSelection)
+          .chain(getCurrentCursorPos(e.target))
           .map(findTextToInsert)
           .map(findNewCursorPos)
-          .chain(updateTextNode(app))
+          .chain(updateTextNode(app, e.target))
           .chain(focusEventTarget(e))
           .chain(hideBox)
           .cata(console.error, noop)
@@ -58,8 +61,10 @@ module.exports = (store, app) => {
     onKeypress (e) {
       if (/^[a-z0-9]$/i.test(e.key)) {
         initCtx({})
-          .chain(getCursorOffset(app, e))
           .chain(getWindowSelection)
+          .chain(getCurrentCursorPos(e.target))
+          .chain(getCursorOffset(app, e))
+          .chain(getCurrentText(e.target))
           .map(findSearchterm(e.key))
           .chain(dispatchPosition(app))
           .chain(dispatchSearchterm(app))

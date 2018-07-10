@@ -3,7 +3,11 @@ const {
   merge,
   prop,
   find,
-  findIndex
+  findIndex,
+  last,
+  split,
+  slice,
+  compose
 } = require('ramda')
 
 const {
@@ -62,9 +66,18 @@ module.exports = {
     return merge(ctx, {boxPos})
   }),
   findNewCursorPos: ctx => {
-    return merge(ctx, {pos: calculateCursorPosition(ctx.searchterm, ctx.suggestions, ctx.selection)})
+    const { textToInsert, initCurPos } = ctx
+    const offset = textToInsert.length > 0 ? textToInsert.length : 1
+    return merge(ctx, {pos: initCurPos.end + offset})
   },
-  findSearchterm: curry((key, ctx) => {
-    return merge(ctx, {searchterm: lastWordUpToCursor(ctx.selection, key)})
+  findSearchterm: curry((lastChar, ctx) => {
+    const { initCurPos, initText } = ctx
+    const getLastWord = compose(
+      last,
+      split(/\s+/),
+      slice(0, initCurPos.end)
+    )
+    const lastWord = getLastWord(initText)
+    return merge(ctx, {searchterm: lastWord + lastChar})
   })
 }
