@@ -273,3 +273,35 @@ test('textarea - suggestion box respects vertical screen border (with inverse se
     t.fail(e.message)
   }
 })
+
+test('textarea - suggest completions when scrolled down', async t => {
+  t.plan(1)
+  try {
+    const { browser, contentPage } = await loadExtension('one-textarea-field-vert-scroll')
+    const textboxEl = await contentPage.$('#completeme')
+    await textboxEl.type('thi', {delay: 100})
+    const captured = await contentPage.screenshot()
+    const truth = fs.readFileSync(`${screenshotDir}/textarea-suggest-completions-vert-scroll.png`)
+    const matchesScreenshot = await looksSame(truth, captured)
+    t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
+    await browser.close()
+  } catch (e) {
+    t.fail(e.message)
+  }
+})
+
+test('textarea - suggest completions when scrolled right', async t => {
+  t.plan(1)
+  try {
+    const { browser, contentPage } = await loadExtension('one-textarea-field-horiz-scroll')
+    const textboxEl = await contentPage.$('#completeme')
+    await textboxEl.type('thi', {delay: 100})
+    const captured = await contentPage.screenshot()
+    const truth = fs.readFileSync(`${screenshotDir}/textarea-suggest-completions-horiz-scroll.png`)
+    const matchesScreenshot = await looksSame(truth, captured)
+    t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
+    await browser.close()
+  } catch (e) {
+    t.fail(e.message)
+  }
+})
