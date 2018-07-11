@@ -9,6 +9,19 @@ const { tryCatchify } = require('./wrapper')
 
 module.exports = {
   getWindowSelectionIO: () => tryCatchify(() => window.getSelection()),
+  getWindowScrollIO: el => tryCatchify(() => {
+    if (el.type === 'textarea') {
+      return {
+        x: window.pageXOffset + document.body.scrollLeft,
+        y: window.pageYOffset + document.body.scrollTop
+      }
+    } else {
+      return {
+        x: window.pageXOffset,
+        y: window.pageYOffset
+      }
+    }
+  }),
   getClientSizeIO: () => tryCatchify(() => {
     const { clientWidth, clientHeight } = document.body
     return { clientWidth, clientHeight }
@@ -19,9 +32,14 @@ module.exports = {
   getFromStoreIO: curry((store, key) => {
     return tryCatchify(() => store.get(key))
   }),
-  getCursorOffsetIO: curry((app, el, curPos) => tryCatchify(() => {
+  getCursorOffsetIO: curry((app, el, pageScroll, curPos) => tryCatchify(() => {
+    const elOffset = offset(el)
+    // offset mutates the DOM so cursor position needs to be corrected in some edge cases
     process.nextTick(() => dispatch(app, 'setCursorPos', {pos: curPos + 1, el}))
-    return offset(el)
+    return Object.assign({}, elOffset, {
+      left: elOffset.left - pageScroll.x,
+      top: elOffset.top - pageScroll.y,
+    })
   })),
   getSelectedTextareaCurPosIO: el => tryCatchify(() => {
     if (typeof(el.selectionStart) === 'undefined' || typeof(el.selectionEnd) === 'undefined') {

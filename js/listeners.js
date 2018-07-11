@@ -3,6 +3,7 @@ const { Identity } = require('monet')
 const {
   getStoreKeyValue,
   getWindowSelection,
+  getWindowScroll,
   getCurrentCursorPos,
   getCurrentText,
   getCursorOffset,
@@ -63,6 +64,7 @@ module.exports = (store, app) => {
         initCtx({})
           .chain(getWindowSelection)
           .chain(getCurrentCursorPos(e.target))
+          .chain(getWindowScroll(e.target))
           .chain(getCursorOffset(app, e))
           .chain(getCurrentText(e.target))
           .map(findSearchterm(e.key))

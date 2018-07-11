@@ -3,6 +3,7 @@ const { curry, merge } = require('ramda')
 
 const {
   getWindowSelectionIO,
+  getWindowScrollIO,
   getSelectedTextareaCurPosIO,
   getCurrentTextareaTextIO,
   getClientSizeIO,
@@ -35,6 +36,7 @@ module.exports = {
     return readToCtx(readVal, key, ctx)
   }),
   getWindowSelection: ctx => readToCtx(getWindowSelectionIO(), 'selection', ctx),
+  getWindowScroll: curry((el, ctx) => readToCtx(getWindowScrollIO(el), 'pageScroll', ctx)),
   getCurrentCursorPos: curry((el, ctx) => {
     const { selection } = ctx
     const getPosition = el.type === 'textarea'
@@ -56,8 +58,8 @@ module.exports = {
     return readToCtx(getAppSizeIO(app), 'appSize', ctx)
   }),
   getCursorOffset: curry((app, event, ctx) => {
-    const { initCurPos } = ctx
-    const getOffsetVal = getCursorOffsetIO(app, event.target, initCurPos.end)
+    const { initCurPos, pageScroll } = ctx
+    const getOffsetVal = getCursorOffsetIO(app, event.target, pageScroll, initCurPos.end)
     return readToCtx(getOffsetVal, 'offset', ctx)
   }),
   updateTextNode: curry((app, el, ctx) => {
