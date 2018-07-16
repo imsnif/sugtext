@@ -30,6 +30,10 @@
     "caret-pos": "^1.0.1",
     "fluture": "^8.0.2",
     "monet": "^0.8.10",
+    "pouchdb": "^7.0.0",
+    "pouchdb-collate": "^7.0.0",
+    "pouchdb-debug": "^7.0.0",
+    "pouchdb-find": "^7.0.0",
     "ramda": "^0.25.0",
     "redom": "~3.12.3"
   }
