@@ -13,6 +13,8 @@ const {
   dispatchSearchterm,
   dispatchPosition,
   sendSearchtermToBackground,
+  sendAcceptedToBackground,
+  sendNewWordToBackground,
   waitForEventLoop,
 } = require('./pipeline/transforms')
 const { findTextToInsert, findNewCursorPos, findSearchterm } = require('./pipeline/formatters')
@@ -28,6 +30,17 @@ module.exports = (store, app) => {
   const moveSelection = dispatchAction(app, 'moveSelection')
   return {
     onKeyDown (e) {
+      if (e.key === ' ') {
+        // TODO: merge with below chain once onKeypress is merged as well
+        initCtx({})
+          .chain(getWindowSelection)
+          .chain(getCurrentCursorPos(e.target))
+          .chain(getCurrentText(e.target))
+          .map(findSearchterm(''))
+          .chain(sendNewWordToBackground)
+          .chain(hideBox)
+          .cata(console.error, noop)
+      }
       if (store.get('visibility') !== 'visible') return
       if (e.key === 'Tab') {
         initCtx({})
@@ -40,6 +53,7 @@ module.exports = (store, app) => {
           .chain(updateTextNode(app, e.target))
           .chain(focusEventTarget(e))
           .chain(hideBox)
+          .chain(sendAcceptedToBackground)
           .cata(console.error, noop)
       } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
         initCtx({})
@@ -61,6 +75,7 @@ module.exports = (store, app) => {
     },
     onKeypress (e) {
       if (/^[a-z0-9]$/i.test(e.key)) {
+        // TODO: move to onKeyDown
         initCtx({})
           .chain(getWindowSelection)
           .chain(getCurrentCursorPos(e.target))

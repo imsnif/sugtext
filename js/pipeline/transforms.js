@@ -96,6 +96,16 @@ module.exports = {
     const send = sendToBackgroundIO({searchterm})
     return returnCtx(send, ctx)
   },
+  sendAcceptedToBackground: ctx => {
+    const { searchterm, textToInsert } = ctx
+    const send = sendToBackgroundIO({newWord: searchterm + textToInsert})
+    return returnCtx(send, ctx)
+  },
+  sendNewWordToBackground: ctx => {
+    const { searchterm } = ctx
+    const send = sendToBackgroundIO({newWord: searchterm})
+    return returnCtx(send, ctx)
+  },
   updateCursorPosition: curry((pos, el, ctx) => {
     const { selection } = ctx
     const update = el && el.type === 'textarea'

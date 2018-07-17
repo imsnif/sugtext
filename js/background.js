@@ -2,33 +2,57 @@
 
 const commonEnglishWords = require('../common-words.json')
 const PouchDB = require('pouchdb')
-const db = new PouchDB('words')
 
-function initDb () {
+const commonWordsDb = new PouchDB('words')
+const userWordsDb = new PouchDB('userWords')
+
+function initDbs () {
   // TODO: clear db?
   const wordDocs = commonEnglishWords.map((w, i) => {
     return {_id: w, score: commonEnglishWords.length - i}
   })
-  return db.bulkDocs(wordDocs)
+  return commonWordsDb.bulkDocs(wordDocs)
 }
-initDb()
+initDbs()
 
-browser.runtime.onMessage.addListener(generateSuggestions)
+browser.runtime.onMessage.addListener(msg => {
+  const { searchterm, newWord } = msg
+  if (searchterm && searchterm.length > 1) {
+    generateSuggestions(searchterm)
+  }
+  if (newWord && newWord.length > 1) {
+    addUserWord(newWord)
+  }
+})
 
-async function generateSuggestions (message) {
-  const {searchterm} = message
+async function getExistingWord (word) {
+  try {
+    const existing = await userWordsDb.get(word)
+    return existing
+  } catch (e) {
+    if (e.status === 404) {
+      return {}
+    }
+  }
+}
+
+async function addUserWord (newWord) {
+  const existing = await getExistingWord(newWord)
+  const updated = {_id: newWord, score: (existing.score || 0) + 1}
+  await userWordsDb.put(Object.assign({}, existing, updated))
+}
+
+async function generateSuggestions (searchterm) {
   // TODO: unique id from instance rather than active tab with nested iframes
   const tabs = await browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT})
   const tabId = tabs[0].id
-  const suggestions = searchterm && searchterm.length > 1
-    ? await findWords(searchterm)
-    : []
+  const suggestions = await findWords(searchterm)
   if (suggestions.length > 0) {
     browser.tabs.sendMessage(tabId, {suggestions})
   }
 }
 
-async function findWords (searchterm) {
+async function queryForWords (db, searchterm, maxCount) {
   const matches = await db.allDocs({
     startkey: searchterm,
     endkey: `${searchterm}\uffff`,
@@ -37,5 +61,19 @@ async function findWords (searchterm) {
   return matches.rows
   .filter(m => m.id.length >= (searchterm.length + 2))
   .sort((a, b) => a.doc.score < b.doc.score)
-  .slice(0, 5).map(m => m.id)
+  .slice(0, maxCount).map(m => m.id)
+}
+
+async function findWords (searchterm) {
+  const userWordsResults = await queryForWords(userWordsDb, searchterm, 5)
+  if (userWordsResults.length === 5) {
+    return userWordsResults
+  } else {
+    const commonWordsResults = await queryForWords(
+      commonWordsDb,
+      searchterm,
+      5 - userWordsResults.length
+    )
+    return userWordsResults.concat(commonWordsResults)
+  }
 }
