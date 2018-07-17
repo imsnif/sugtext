@@ -305,3 +305,42 @@ test('textarea - suggest completions when scrolled right', async t => {
     t.fail(e.message)
   }
 })
+
+test('textarea - prefer previously completed words when suggesting completions', async t => {
+  t.plan(1)
+  try {
+    const { browser, contentPage } = await loadExtension('one-contenteditable-field')
+    const textboxEl = await contentPage.$('#completeme')
+    await textboxEl.type('thia', {delay: 100})
+    await textboxEl.press('ArrowDown', {delay: 100})
+    await textboxEl.press('Tab', {delay: 100})
+    await textboxEl.press('Enter', {delay: 100})
+    await textboxEl.type('thia', {delay: 100})
+    const captured = await contentPage.screenshot()
+    const truth = fs.readFileSync(`${screenshotDir}/textarea-prefer-previously-completed.png`)
+    const matchesScreenshot = await looksSame(truth, captured)
+    t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
+    await browser.close()
+  } catch (e) {
+    t.fail(e.message)
+  }
+})
+
+test('textarea - prefer new words (previously failed to complete) when suggestion completions', async t => {
+  t.plan(1)
+  try {
+    const { browser, contentPage } = await loadExtension('one-contenteditable-field')
+    const textboxEl = await contentPage.$('#completeme')
+    await textboxEl.type('thiafoobarbazilicious', {delay: 100})
+    await textboxEl.press(' ', {delay: 100})
+    await textboxEl.press('Enter', {delay: 100})
+    await textboxEl.type('thia', {delay: 100})
+    const captured = await contentPage.screenshot()
+    const truth = fs.readFileSync(`${screenshotDir}/textarea-prefer-new-words.png`)
+    const matchesScreenshot = await looksSame(truth, captured)
+    t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
+    await browser.close()
+  } catch (e) {
+    t.fail(e.message)
+  }
+})
