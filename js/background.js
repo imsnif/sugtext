@@ -34,5 +34,8 @@ async function findWords (searchterm) {
     endkey: `${searchterm}\uffff`,
     include_docs: true
   })
-  return matches.rows.sort(m => m.score).slice(0, 5).map(m => m.id) // TODO: better
+  return matches.rows
+  .filter(m => m.id.length >= (searchterm.length + 2))
+  .sort((a, b) => a.doc.score < b.doc.score)
+  .slice(0, 5).map(m => m.id)
 }
