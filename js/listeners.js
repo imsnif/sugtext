@@ -30,17 +30,6 @@ module.exports = (store, app) => {
   const moveSelection = dispatchAction(app, 'moveSelection')
   return {
     onKeyDown (e) {
-      if (e.key === ' ') {
-        // TODO: merge with below chain once onKeypress is merged as well
-        initCtx({})
-          .chain(getWindowSelection)
-          .chain(getCurrentCursorPos(e.target))
-          .chain(getCurrentText(e.target))
-          .map(findSearchterm(''))
-          .chain(sendNewWordToBackground)
-          .chain(hideBox)
-          .cata(console.error, noop)
-      }
       if (store.get('visibility') !== 'visible') return
       if (e.key === 'Tab') {
         initCtx({})
@@ -74,8 +63,9 @@ module.exports = (store, app) => {
       })
     },
     onKeypress (e) {
+      const isPartOfCombo = e.altKey || e.ctrlKey || e.metaKey
+      if (isPartOfCombo) return
       if (/^[a-z0-9]$/i.test(e.key)) {
-        // TODO: move to onKeyDown
         initCtx({})
           .chain(getWindowSelection)
           .chain(getCurrentCursorPos(e.target))
@@ -86,6 +76,15 @@ module.exports = (store, app) => {
           .chain(dispatchPosition(app))
           .chain(dispatchSearchterm(app))
           .chain(sendSearchtermToBackground)
+          .cata(console.error, noop)
+      } else if (e.key === ' ') {
+        initCtx({})
+          .chain(getWindowSelection)
+          .chain(getCurrentCursorPos(e.target))
+          .chain(getCurrentText(e.target))
+          .map(findSearchterm(''))
+          .chain(sendNewWordToBackground)
+          .chain(hideBox)
           .cata(console.error, noop)
       }
     },
