@@ -16,9 +16,9 @@ function initDbs () {
 initDbs()
 
 browser.runtime.onMessage.addListener(msg => {
-  const { searchterm, newWord } = msg
+  const { appId, searchterm, newWord } = msg
   if (searchterm && searchterm.length > 1) {
-    generateSuggestions(searchterm)
+    generateSuggestions(searchterm, appId)
   }
   if (newWord && newWord.length > 1) {
     addUserWord(newWord)
@@ -42,13 +42,12 @@ async function addUserWord (newWord) {
   await userWordsDb.put(Object.assign({}, existing, updated))
 }
 
-async function generateSuggestions (searchterm) {
-  // TODO: unique id from instance rather than active tab with nested iframes
+async function generateSuggestions (searchterm, appId) {
   const tabs = await browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT})
   const tabId = tabs[0].id
   const suggestions = await findWords(searchterm)
   if (suggestions.length > 0) {
-    browser.tabs.sendMessage(tabId, {suggestions})
+    browser.tabs.sendMessage(tabId, {appId, suggestions})
   }
 }
 

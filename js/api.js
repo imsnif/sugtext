@@ -1,6 +1,7 @@
+const uuid = require('uuid/v4')
 const { Identity } = require('monet')
 
-const { listen, dispatch } = require('./util/dispatch')
+const { listen } = require('./util/dispatch')
 const listeners = require('./listeners')
 const observe = require('./util/observe-dom')
 const updateQueue = require('./util/update-queue')
@@ -30,7 +31,7 @@ const noop = () => {}
 
 module.exports = (app) => {
   const store = new Store();
-  const set = updateQueue(store, app)
+  const id = uuid()
   const updateAppState = updateState(store, app)
   const updateAppStateFromCtx = updateStateFromCtx(store, app)
   const getFromStore = getStoreKeyValue(store)
@@ -39,7 +40,7 @@ module.exports = (app) => {
     onBlur,
     onKeypress,
     onMsgFromBackground
-  } = listeners(store, app)
+  } = listeners(store, app, id)
   listen(app, {
     search (searchterm) {
       initCtx({})

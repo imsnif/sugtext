@@ -91,21 +91,21 @@ module.exports = {
     const dispatch = dispatchActionIO(app, 'position', ctx.offset)
     return returnCtx(dispatch, ctx)
   }),
-  sendSearchtermToBackground: ctx => {
+  sendSearchtermToBackground: curry((appId, ctx) => {
     const { searchterm } = ctx
-    const send = sendToBackgroundIO({searchterm})
+    const send = sendToBackgroundIO({appId, searchterm})
     return returnCtx(send, ctx)
-  },
-  sendAcceptedToBackground: ctx => {
+  }),
+  sendAcceptedToBackground: curry((appId, ctx) => {
     const { searchterm, textToInsert } = ctx
-    const send = sendToBackgroundIO({newWord: searchterm + textToInsert})
+    const send = sendToBackgroundIO({appId, newWord: searchterm + textToInsert})
     return returnCtx(send, ctx)
-  },
-  sendNewWordToBackground: ctx => {
+  }),
+  sendNewWordToBackground: curry((appId, ctx) => {
     const { searchterm } = ctx
-    const send = sendToBackgroundIO({newWord: searchterm})
+    const send = sendToBackgroundIO({appId, newWord: searchterm})
     return returnCtx(send, ctx)
-  },
+  }),
   updateCursorPosition: curry((pos, el, ctx) => {
     const { selection } = ctx
     const update = el && el.type === 'textarea'

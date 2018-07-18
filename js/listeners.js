@@ -22,7 +22,7 @@ const { findTextToInsert, findNewCursorPos, findSearchterm } = require('./pipeli
 const initCtx = Identity
 const noop = () => {}
 
-module.exports = (store, app) => {
+module.exports = (store, app, id) => {
   const getFromStore = getStoreKeyValue(store)
   const hideBox = dispatchAction(app, 'visibility', 'hidden')
   const showBox = dispatchAction(app, 'visibility', 'visible')
@@ -42,7 +42,7 @@ module.exports = (store, app) => {
           .chain(updateTextNode(app, e.target))
           .chain(focusEventTarget(e))
           .chain(hideBox)
-          .chain(sendAcceptedToBackground)
+          .chain(sendAcceptedToBackground(id))
           .cata(console.error, noop)
       } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
         initCtx({})
@@ -75,7 +75,7 @@ module.exports = (store, app) => {
           .map(findSearchterm(e.key))
           .chain(dispatchPosition(app))
           .chain(dispatchSearchterm(app))
-          .chain(sendSearchtermToBackground)
+          .chain(sendSearchtermToBackground(id))
           .cata(console.error, noop)
       } else if (e.key === ' ') {
         initCtx({})
@@ -83,16 +83,18 @@ module.exports = (store, app) => {
           .chain(getCurrentCursorPos(e.target))
           .chain(getCurrentText(e.target))
           .map(findSearchterm(''))
-          .chain(sendNewWordToBackground)
+          .chain(sendNewWordToBackground(id))
           .chain(hideBox)
           .cata(console.error, noop)
       }
     },
-    onMsgFromBackground ({suggestions}) {
-      initCtx({})
-        .chain(showBox)
-        .chain(updateSuggestions(suggestions))
-        .cata(console.error, noop)
+    onMsgFromBackground ({appId, suggestions}) {
+      if (appId === id) {
+        initCtx({})
+          .chain(showBox)
+          .chain(updateSuggestions(suggestions))
+          .cata(console.error, noop)
+      }
     }
   }
 }
