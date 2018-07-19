@@ -5,8 +5,8 @@
   "scripts": {
     "build": "npm run build-background & npm run build-content-script",
     "watch": "npm run watch-background & npm run watch-content-script",
-    "build-content-script": "browserify --debug js/index.js -o dist/main.js",
-    "build-background": "browserify --debug js/background.js -o dist/background.js",
+    "build-content-script": "browserify js/index.js -o dist/main.js",
+    "build-background": "browserify js/background.js -o dist/background.js",
     "watch-content-script": "watchify --debug js/index.js -o dist/main.js",
     "watch-background": "watchify --debug js/background.js -o dist/background.js",
     "test": "tape ./test/**/*.spec.js | tap-spec"

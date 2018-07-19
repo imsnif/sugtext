@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "sugtext",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Autocompletes text in textAreas",
   "content_scripts": [
     {
@@ -12,5 +12,11 @@
   ],
   "background": {
     "scripts": ["dist/background.js"]
+  },
+  "applications": {
+    "gecko": {
+      "id": "{8580352b-4e45-4e4d-a6ae-b3b87c9d9aed}",
+      "strict_min_version": "42.0"
+    }
   }
 }
