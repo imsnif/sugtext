@@ -37,8 +37,9 @@ async function getExistingWord (word) {
 }
 
 async function addUserWord (newWord) {
-  const existing = await getExistingWord(newWord)
-  const updated = {_id: newWord, score: (existing.score || 0) + 1}
+  const trimmedWord = newWord.replace(/[,|.|!|\?]+$/, '')
+  const existing = await getExistingWord(trimmedWord)
+  const updated = {_id: trimmedWord, score: (existing.score || 0) + 1}
   await userWordsDb.put(Object.assign({}, existing, updated))
 }
 
