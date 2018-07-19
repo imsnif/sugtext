@@ -51,7 +51,7 @@ async function generateSuggestions (searchterm, appId) {
   }
 }
 
-async function queryForWords (db, searchterm, maxCount) {
+async function queryForWords (db, searchterm) {
   const matches = await db.allDocs({
     startkey: searchterm,
     endkey: `${searchterm}\uffff`,
@@ -60,19 +60,17 @@ async function queryForWords (db, searchterm, maxCount) {
   return matches.rows
   .filter(m => m.id.length >= (searchterm.length + 2))
   .sort((a, b) => a.doc.score < b.doc.score)
-  .slice(0, maxCount).map(m => m.id)
+  .slice(0, 5).map(m => m.id)
 }
 
 async function findWords (searchterm) {
-  const userWordsResults = await queryForWords(userWordsDb, searchterm, 5)
+  const userWordsResults = await queryForWords(userWordsDb, searchterm)
   if (userWordsResults.length === 5) {
     return userWordsResults
   } else {
-    const commonWordsResults = await queryForWords(
-      commonWordsDb,
-      searchterm,
-      5 - userWordsResults.length
-    )
-    return userWordsResults.concat(commonWordsResults)
+    const commonWordsResults = await queryForWords(commonWordsDb, searchterm)
+    return Array.from(
+      new Set(userWordsResults.concat(commonWordsResults))
+    ).slice(0, 5)
   }
 }
