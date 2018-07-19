@@ -344,3 +344,22 @@ test('textarea - prefer new words (previously failed to complete) when suggestio
     t.fail(e.message)
   }
 })
+
+test('textarea - trim punctuation at end of previously failed to complete words', async t => {
+  t.plan(1)
+  try {
+    const { browser, contentPage } = await loadExtension('one-contenteditable-field')
+    const textboxEl = await contentPage.$('#completeme')
+    await textboxEl.type('thiafoobarbazilicious,', {delay: 100})
+    await textboxEl.press(' ', {delay: 100})
+    await textboxEl.press('Enter', {delay: 100})
+    await textboxEl.type('thia', {delay: 100})
+    const captured = await contentPage.screenshot()
+    const truth = fs.readFileSync(`${screenshotDir}/textarea-prefer-new-words-trimmed.png`)
+    const matchesScreenshot = await looksSame(truth, captured)
+    t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
+    await browser.close()
+  } catch (e) {
+    t.fail(e.message)
+  }
+})
