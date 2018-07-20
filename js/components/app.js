@@ -2,7 +2,7 @@ const { el } = require('redom')
 const { dispatch } = require('../util/dispatch')
 const { SuggestionBox } = require('./suggestion-box')
 
-const className = '.app'
+const className = '.sugtext'
 const style = {
   position: 'fixed',
   zIndex: 10000 // TODO: dynamically
