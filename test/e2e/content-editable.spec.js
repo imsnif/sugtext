@@ -97,7 +97,7 @@ test('contentEditable - complete first word when pressing TAB', async t => {
   }
 })
 
-test('contentEditable - complete second first word when pressing down and then TAB', async t => {
+test('contentEditable - complete second word when pressing down and then TAB', async t => {
   t.plan(1)
   try {
     const { browser, contentPage } = await loadExtension('one-contenteditable-field')
