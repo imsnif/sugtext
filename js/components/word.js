@@ -2,9 +2,9 @@ const { el } = require('redom')
 
 const style = {
   selected: {
-    backgroundColor: '#1c2321',
-    borderLeft: '5px solid #1c2321',
-    color: '#7d98a1'
+    backgroundColor: '#3d3f40',
+    borderLeft: '5px solid #3d3f40',
+    color: '#dfff00'
   },
   unselected: {
     backgroundColor: '#7d98a1',

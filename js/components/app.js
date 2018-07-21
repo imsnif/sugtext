@@ -1,6 +1,8 @@
+'use strict'
+
 const { el } = require('redom')
-const { dispatch } = require('../util/dispatch')
 const { SuggestionBox } = require('./suggestion-box')
+const { InstructionLine } = require('./instruction-line')
 
 const className = '.sugtext'
 const style = {
@@ -13,6 +15,7 @@ module.exports = class App {
     this.suggestionBox = SuggestionBox()
     this.el = el(className,
       this.suggestionBox,
+      InstructionLine(),
       {style}
     )
   }

@@ -5,7 +5,6 @@ const { Word } = require('./word')
 const style = {
   maxWidth: "200px",
   position: 'relative',
-  display: 'inline-block',
   listStyleType: 'none',
   margin: 0,
   paddingLeft: 0
