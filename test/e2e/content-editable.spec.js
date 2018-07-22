@@ -363,3 +363,55 @@ test('contentEditable - trim punctuation at end of previously failed to complete
     t.fail(e.message)
   }
 })
+
+test('contentEditable - suggestions are case insensitive (always lowercase)', async t => {
+  t.plan(1)
+  try {
+    const { browser, contentPage } = await loadExtension('one-contenteditable-field')
+    const textboxEl = await contentPage.$('#completeme')
+    await textboxEl.type('tHia', {delay: 100})
+    const captured = await contentPage.screenshot()
+    const truth = fs.readFileSync(`${screenshotDir}/contenteditable-suggest-case-insensitive.png`)
+    const matchesScreenshot = await looksSame(truth, captured)
+    t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
+    await browser.close()
+  } catch (e) {
+    t.fail(e.message)
+  }
+})
+
+test('contentEditable - new inserted words are case insensitive (always lowercase)', async t => {
+  t.plan(1)
+  try {
+    const { browser, contentPage } = await loadExtension('one-contenteditable-field')
+    const textboxEl = await contentPage.$('#completeme')
+    await textboxEl.type('Thiafoobarbazilicious,', {delay: 100})
+    await textboxEl.press(' ', {delay: 100})
+    await textboxEl.press('Enter', {delay: 100})
+    await textboxEl.type('thia', {delay: 100})
+    const captured = await contentPage.screenshot()
+    const truth = fs.readFileSync(`${screenshotDir}/contenteditable-new-words-case-insensitive.png`)
+    const matchesScreenshot = await looksSame(truth, captured)
+    t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
+    await browser.close()
+  } catch (e) {
+    t.fail(e.message)
+  }
+})
+
+test('contentEditable - completions are case sensitive (respect existing capital letters)', async t => {
+  t.plan(1)
+  try {
+    const { browser, contentPage } = await loadExtension('one-contenteditable-field')
+    const textboxEl = await contentPage.$('#completeme')
+    await textboxEl.type('tHia', {delay: 100})
+    await textboxEl.press('Tab', {delay: 100})
+    const captured = await contentPage.screenshot()
+    const truth = fs.readFileSync(`${screenshotDir}/contenteditable-complete-case-sensitive.png`)
+    const matchesScreenshot = await looksSame(truth, captured)
+    t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
+    await browser.close()
+  } catch (e) {
+    t.fail(e.message)
+  }
+})
