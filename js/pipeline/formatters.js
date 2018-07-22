@@ -7,7 +7,8 @@ const {
   last,
   split,
   slice,
-  compose
+  compose,
+  toLower
 } = require('ramda')
 
 const {
@@ -73,6 +74,7 @@ module.exports = {
   findSearchterm: curry((lastChar, ctx) => {
     const { initCurPos, initText } = ctx
     const getLastWord = compose(
+      toLower,
       last,
       split(/\s+/),
       slice(0, initCurPos.end)
