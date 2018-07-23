@@ -9,8 +9,7 @@ const style = {
   color: '#dfff00',
   fontSize: '0.4em',
   fontWeight: 'bold',
-  textRendering: 'optimizeLegibility',
-  visibility: 'inherit'
+  textRendering: 'optimizeLegibility'
 }
 
 const instructionText = '<TAB> / <UP> / <DOWN>'

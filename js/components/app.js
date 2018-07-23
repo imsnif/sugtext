@@ -7,6 +7,7 @@ const { InstructionLine } = require('./instruction-line')
 const className = '.sugtext'
 const style = {
   position: 'fixed',
+  display: 'none',
   zIndex: 10000 // TODO: dynamically
 }
 
@@ -27,7 +28,7 @@ module.exports = class App {
     this.el.style.top = `${Number(position.top)}px`
   }
   _updateVisibility (visibility) {
-    this.el.style.visibility = visibility
+    this.el.style.display = visibility === 'hidden' ? 'none' : 'initial'
   }
   update (data) {
     const { suggestions, position, visibility } = data
