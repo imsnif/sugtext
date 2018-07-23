@@ -7,7 +7,6 @@ const commonWordsDb = new PouchDB('words')
 const userWordsDb = new PouchDB('userWords')
 
 function initDbs () {
-  // TODO: clear db?
   const wordDocs = commonEnglishWords.map((w, i) => {
     return {_id: w, score: commonEnglishWords.length - i}
   })
