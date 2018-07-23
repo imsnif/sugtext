@@ -66,7 +66,7 @@ module.exports = {
     const { textToInsert, initCurPos, pos } = ctx
     const update = el.type === 'textarea'
       ? updateTextareaNodeIO(app, el, initCurPos, pos, textToInsert)
-      : updateContentEditableNodeIO(app, pos, textToInsert)
+      : updateContentEditableNodeIO(app, pos, el, textToInsert)
     return returnCtx(update, ctx)
   }),
   focusEventTarget: curry((e, ctx) => {
@@ -110,7 +110,7 @@ module.exports = {
     const { selection } = ctx
     const update = el && el.type === 'textarea'
       ? updateCursorPositionInTextareaIO(pos, el)
-      : updateCursorPositionInSelectionIO(pos, selection)
+      : updateCursorPositionInSelectionIO(pos, el, selection)
     return returnCtx(update, ctx)
   })
 }

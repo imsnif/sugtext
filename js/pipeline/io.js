@@ -62,20 +62,23 @@ module.exports = {
     el.value = text
     process.nextTick(() => dispatch(app, 'setCursorPos', {pos, el}))
   })),
-  updateContentEditableNodeIO: curry((app, pos, textToInsert) => tryCatchify(() => {
+  updateContentEditableNodeIO: curry((app, pos, el, textToInsert) => tryCatchify(() => {
     document.execCommand('insertText', false, textToInsert)
-    process.nextTick(() => dispatch(app, 'setCursorPos', {pos}))
+    process.nextTick(() => dispatch(app, 'setCursorPos', {pos, el}))
   })),
   updateCursorPositionInTextareaIO: curry((pos, el) => tryCatchify(() => {
     el.selectionStart = pos
     el.selectionEnd = pos
   })),
-  updateCursorPositionInSelectionIO: curry((pos, selection) => tryCatchify(() => {
-    const range = document.createRange()
-    const { anchorNode } = selection
-    range.setStart(anchorNode, pos)
-    selection.removeAllRanges()
-    selection.addRange(range)
+  updateCursorPositionInSelectionIO: curry((pos, el, selection) => tryCatchify(() => {
+    el.focus()
+    process.nextTick(() => { // TODO: better solution
+      const range = document.createRange()
+      const { anchorNode } = selection
+      range.setStart(anchorNode, pos)
+      selection.removeAllRanges()
+      selection.addRange(range)
+    })
   })),
   focusEventTargetIO: e => tryCatchify(() => {
     e.preventDefault()
