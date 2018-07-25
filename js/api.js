@@ -15,8 +15,7 @@ const {
   updateState,
   updateStateFromCtx,
   getAppSize,
-  getWindowSelection,
-  updateCursorPosition
+  getWindowSelection
 } = require('./pipeline/transforms')
 const {
   formatSuggestions,
@@ -75,12 +74,6 @@ module.exports = (app) => {
         .chain(getFromStore('suggestions'))
         .map(findNewSelectedSuggestions(direction))
         .chain(updateAppStateFromCtx('selectedSuggestions', 'suggestions'))
-        .cata(console.error, noop)
-    },
-    setCursorPos ({pos, el = false}) { // TODO: move this to be a listener on the element
-      initCtx({})
-        .chain(getWindowSelection)
-        .chain(updateCursorPosition(pos, el))
         .cata(console.error, noop)
     }
   })

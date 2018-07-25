@@ -15,8 +15,6 @@ const {
   dispatchActionIO,
   sendToBackgroundIO,
   updateStateIO,
-  updateCursorPositionInTextareaIO,
-  updateCursorPositionInSelectionIO
 } = require('./io')
 
 const {
@@ -102,12 +100,5 @@ module.exports = {
     const { searchterm } = ctx
     const send = sendToBackgroundIO({appId, newWord: searchterm})
     return returnCtx(send, ctx)
-  }),
-  updateCursorPosition: curry((pos, el, ctx) => {
-    const { selection } = ctx
-    const update = el && el.type === 'textarea'
-      ? updateCursorPositionInTextareaIO(pos, el)
-      : updateCursorPositionInSelectionIO(pos, el, selection)
-    return returnCtx(update, ctx)
   })
 }

@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Text completion addon for the browser",
   "scripts": {
+    "postinstall": "patch-package",
     "build": "npm run build-background & npm run build-content-script",
     "watch": "npm run watch-background & npm run watch-content-script",
     "build-content-script": "browserify js/index.js -o dist/main.js",
@@ -20,6 +21,7 @@
     "babelify": "^8.0.0",
     "browserify": "^16.2.2",
     "looks-same": "^3.3.0",
+    "patch-package": "^5.1.1",
     "puppeteer": "^1.5.0",
     "tap-spec": "^5.0.0",
     "tape": "^4.9.1",

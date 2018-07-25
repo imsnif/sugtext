@@ -35,8 +35,6 @@ module.exports = {
   }),
   getCursorOffsetIO: curry((app, el, pageScroll, curPos) => tryCatchify(() => {
     const elOffset = offset(el)
-    // offset mutates the DOM so cursor position needs to be corrected in some edge cases
-    process.nextTick(() => dispatch(app, 'setCursorPos', {pos: curPos + 1, el}))
     return Object.assign({}, elOffset, {
       left: elOffset.left - pageScroll.x,
       top: elOffset.top - pageScroll.y,
@@ -58,20 +56,6 @@ module.exports = {
   }),
   updateTextNodeIO: curry((el, textToInsert) => tryCatchify(() => {
     insertTextAtCursor(el, textToInsert)
-  })),
-  updateCursorPositionInTextareaIO: curry((pos, el) => tryCatchify(() => {
-    el.selectionStart = pos
-    el.selectionEnd = pos
-  })),
-  updateCursorPositionInSelectionIO: curry((pos, el, selection) => tryCatchify(() => {
-    el.focus()
-    process.nextTick(() => { // TODO: better solution
-      const range = document.createRange()
-      const { anchorNode } = selection
-      range.setStart(anchorNode, pos)
-      selection.removeAllRanges()
-      selection.addRange(range)
-    })
   })),
   focusEventTargetIO: e => tryCatchify(() => {
     e.preventDefault()
