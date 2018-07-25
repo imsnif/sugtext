@@ -1,5 +1,6 @@
 const { curry, path } = require('ramda')
 const { offset } = require('caret-pos')
+const insertTextAtCursor = require('insert-text-at-cursor')
 const { sendToBackground } = require('../util/msg-bus')
 const updateQueue = require('../util/update-queue')
 
@@ -55,16 +56,8 @@ module.exports = {
       return el.value
     }
   }),
-  updateTextareaNodeIO: curry((app, el, initCurPos, pos, textToInsert) => tryCatchify(() => {
-    const textUpToSelection = el.value.slice(0, initCurPos.start)
-    const textAfterSelection = el.value.slice(initCurPos.end)
-    const text = `${textUpToSelection}${textToInsert}${textAfterSelection}`
-    el.value = text
-    process.nextTick(() => dispatch(app, 'setCursorPos', {pos, el}))
-  })),
-  updateContentEditableNodeIO: curry((app, pos, el, textToInsert) => tryCatchify(() => {
-    document.execCommand('insertText', false, textToInsert)
-    process.nextTick(() => dispatch(app, 'setCursorPos', {pos, el}))
+  updateTextNodeIO: curry((el, textToInsert) => tryCatchify(() => {
+    insertTextAtCursor(el, textToInsert)
   })),
   updateCursorPositionInTextareaIO: curry((pos, el) => tryCatchify(() => {
     el.selectionStart = pos

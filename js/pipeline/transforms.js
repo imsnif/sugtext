@@ -10,8 +10,7 @@ const {
   getAppSizeIO,
   getFromStoreIO,
   getCursorOffsetIO,
-  updateContentEditableNodeIO,
-  updateTextareaNodeIO,
+  updateTextNodeIO,
   focusEventTargetIO,
   dispatchActionIO,
   sendToBackgroundIO,
@@ -62,11 +61,9 @@ module.exports = {
     const getOffsetVal = getCursorOffsetIO(app, event.target, pageScroll, initCurPos.end)
     return readToCtx(getOffsetVal, 'offset', ctx)
   }),
-  updateTextNode: curry((app, el, ctx) => {
-    const { textToInsert, initCurPos, pos } = ctx
-    const update = el.type === 'textarea'
-      ? updateTextareaNodeIO(app, el, initCurPos, pos, textToInsert)
-      : updateContentEditableNodeIO(app, pos, el, textToInsert)
+  updateTextNode: curry((el, ctx) => {
+    const { textToInsert } = ctx
+    const update = updateTextNodeIO(el, textToInsert)
     return returnCtx(update, ctx)
   }),
   focusEventTarget: curry((e, ctx) => {

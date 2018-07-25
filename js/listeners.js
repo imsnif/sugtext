@@ -39,7 +39,7 @@ module.exports = (store, app, id) => {
           .chain(getCurrentCursorPos(e.target))
           .map(findTextToInsert)
           .map(findNewCursorPos)
-          .chain(updateTextNode(app, e.target))
+          .chain(updateTextNode(e.target))
           .chain(focusEventTarget(e))
           .chain(hideBox)
           .chain(sendAcceptedToBackground(id))
