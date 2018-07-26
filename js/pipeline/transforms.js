@@ -54,9 +54,9 @@ module.exports = {
   getAppSize: curry((app, ctx) => {
     return readToCtx(getAppSizeIO(app), 'appSize', ctx)
   }),
-  getCursorOffset: curry((app, event, ctx) => {
-    const { initCurPos, pageScroll } = ctx
-    const getOffsetVal = getCursorOffsetIO(app, event.target, pageScroll, initCurPos.end)
+  getCursorOffset: curry((event, ctx) => {
+    const { pageScroll } = ctx
+    const getOffsetVal = getCursorOffsetIO(event.target, pageScroll)
     return readToCtx(getOffsetVal, 'offset', ctx)
   }),
   updateTextNode: curry((el, ctx) => {

@@ -33,11 +33,11 @@ module.exports = {
   getFromStoreIO: curry((store, key) => {
     return tryCatchify(() => store.get(key))
   }),
-  getCursorOffsetIO: curry((app, el, pageScroll, curPos) => tryCatchify(() => {
+  getCursorOffsetIO: curry((el, pageScroll) => tryCatchify(() => {
     const elOffset = offset(el)
     return Object.assign({}, elOffset, {
       left: elOffset.left - pageScroll.x,
-      top: elOffset.top - pageScroll.y,
+      top: elOffset.top - pageScroll.y
     })
   })),
   getSelectedTextareaCurPosIO: el => tryCatchify(() => {
