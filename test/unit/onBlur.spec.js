@@ -2,7 +2,7 @@
 
 const test = require('tape')
 const sinon = require('sinon')
-const { mockStore, mockEvent, mockListeners } = require('../mocks/pipelines')
+const { mockStore, mockListeners } = require('../mocks/pipelines')
 
 test('UNIT => listeners => onBlur => hides box onNextTick', async t => {
   t.plan(2)
