@@ -10,7 +10,8 @@
     "build-background": "browserify js/background.js -o dist/background.js",
     "watch-content-script": "watchify --debug js/index.js -o dist/main.js",
     "watch-background": "watchify --debug js/background.js -o dist/background.js",
-    "test": "tape ./test/**/*.spec.js | tap-spec"
+    "test:e2e": "tape ./test/e2e/*.spec.js | tap-spec",
+    "test": "tape ./test/unit/*.spec.js | tap-spec"
   },
   "author": "Aram Drevekenin <grimsniffer@gmail.com>",
   "license": "MIT",
@@ -22,7 +23,9 @@
     "browserify": "^16.2.2",
     "looks-same": "^3.3.0",
     "patch-package": "^5.1.1",
+    "proxyquire": "^2.0.1",
     "puppeteer": "^1.5.0",
+    "sinon": "^6.1.4",
     "tap-spec": "^5.0.0",
     "tape": "^4.9.1",
     "watchify": "^3.11.0"
