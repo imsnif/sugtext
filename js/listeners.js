@@ -14,8 +14,7 @@ const {
   dispatchPosition,
   sendSearchtermToBackground,
   sendAcceptedToBackground,
-  sendNewWordToBackground,
-  waitForEventLoop,
+  sendNewWordToBackground
 } = require('./pipeline/transforms')
 const { findTextToInsert, findNewCursorPos, findSearchterm } = require('./pipeline/formatters')
 
