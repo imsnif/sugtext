@@ -14,7 +14,13 @@ function currySpy (fn) {
   })
   curried.calledWith = (...args) => spy.calledWith(...args)
   curried.calledBefore = (...args) => spy.calledBefore(...args)
-  curried.callIds = spy.callIds
+  curried.calledAfter = (...args) => spy.calledAfter(...args)
+  Object.defineProperty(curried, 'callIds', {
+    get: () => spy.callIds
+  })
+  Object.defineProperty(curried, 'called', {
+    get: () => spy.called
+  })
   curried.args = spy.args
   Object.defineProperty(curried, 'notCalled', {
     get: () => spy.notCalled
@@ -33,21 +39,34 @@ module.exports = {
     store.get.withArgs('suggestions').returns(suggestions)
     return store
   },
-  mockEvent ({key}) {
+  mockEvent ({key, altKey, ctrlKey, metaKey}) {
     return {
       key,
-      target: 'bar' // TBD
+      altKey,
+      ctrlKey,
+      metaKey,
+      target: 'bar'
     }
   },
   mockListeners () {
     const transforms = {
+      getWindowSelection: sinon.spy(ctx => Right(ctx)),
+      getCurrentCursorPos: currySpy((e, ctx) => Right(ctx)),
+      getWindowScroll: currySpy((el, ctx) => Right(ctx)),
+      getCursorOffset: currySpy((e, ctx) => Right(ctx)),
+      getCurrentText: currySpy((el, ctx) => Right(ctx)),
+      dispatchPosition: currySpy((app, ctx) => Right(ctx)),
+      dispatchSearchterm: currySpy((app, ctx) => Right(ctx)),
+      sendSearchtermToBackground: currySpy((appId, ctx) => Right(ctx)),
       getStoreKeyValue: currySpy((store, key, ctx) => Right(merge(ctx, {[key]: store.get(key)}))),
       dispatchAction: currySpy((app, key, val, ctx) => Right(ctx)),
       updateTextNode: currySpy((el, ctx) => Right(ctx)),
       focusEventTarget: currySpy((e, ctx) => Right(ctx)),
-      sendAcceptedToBackground: currySpy((id, ctx) => Right(ctx))
+      sendAcceptedToBackground: currySpy((appId, ctx) => Right(ctx)),
+      sendNewWordToBackground: currySpy((appId, ctx) => Right(ctx))
     }
     const formatters = {
+      findSearchterm: currySpy((lastChar, ctx) => ctx),
       findTextToInsert: sinon.spy(ctx => ctx)
     }
     const listeners = proxyquire('../../js/listeners', {
