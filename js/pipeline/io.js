@@ -34,7 +34,10 @@ module.exports = {
     return tryCatchify(() => store.get(key))
   }),
   getCursorOffsetIO: curry((el, pageScroll) => tryCatchify(() => {
-    const elOffset = offset(el)
+    const elOffset = offset(
+      el,
+      el.type === 'textarea' ? undefined : {noShadowCaret: true}
+    )
     return Object.assign({}, elOffset, {
       left: elOffset.left - pageScroll.x,
       top: elOffset.top - pageScroll.y

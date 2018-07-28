@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "description": "Text completion addon for the browser",
   "scripts": {
-    "postinstall": "patch-package",
     "build": "npm run build-background & npm run build-content-script",
     "watch": "npm run watch-background & npm run watch-content-script",
     "build-content-script": "browserify js/index.js -o dist/main.js",
@@ -32,7 +31,7 @@
   },
   "dependencies": {
     "@redom/store": "~1.0.0",
-    "caret-pos": "^1.0.1",
+    "caret-pos": "^1.1.0",
     "fluture": "^8.0.2",
     "insert-text-at-cursor": "^0.1.1",
     "monet": "^0.8.10",
