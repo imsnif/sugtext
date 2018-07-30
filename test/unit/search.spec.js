@@ -1,7 +1,7 @@
 'use strict'
 
 const test = require('tape')
-const { mockStore, mockEvent, stubApi, mockDomElement } = require('../mocks/pipelines')
+const { mockStore, stubApi, mockDomElement } = require('../mocks/pipelines')
 
 test('UNIT => api => search => updates app state with searchterm', t => {
   t.plan(1)
@@ -59,7 +59,7 @@ test('UNIT => api => position => updates app state properly', t => {
       'calcBoxPos called with off and ctx'
     )
     t.ok(
-      updateStateFromCtx.calledWith(store, app, 'boxPos', 'position',  {}),
+      updateStateFromCtx.calledWith(store, app, 'boxPos', 'position', {}),
       'box position updated in state'
     )
     t.ok(

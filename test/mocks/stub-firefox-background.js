@@ -15,7 +15,7 @@ window.browser = {
       return [{id: 1}]
     }
   },
-  windows:{
+  windows: {
     WINDOW_ID_CURRENT: 'foo'
   }
 }

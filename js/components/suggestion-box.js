@@ -1,9 +1,9 @@
-const { el, list, text } = require('redom')
+const { el, list } = require('redom')
 
 const { Word } = require('./word')
 
 const style = {
-  maxWidth: "200px",
+  maxWidth: '200px',
   position: 'relative',
   listStyleType: 'none',
   margin: 0,

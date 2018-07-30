@@ -16,7 +16,7 @@ const {
   sendAcceptedToBackground,
   sendNewWordToBackground
 } = require('./pipeline/transforms')
-const { findTextToInsert, findNewCursorPos, findSearchterm } = require('./pipeline/formatters')
+const { findTextToInsert, findSearchterm } = require('./pipeline/formatters')
 
 const initCtx = Identity
 const noop = () => {}

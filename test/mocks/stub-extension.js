@@ -12,7 +12,7 @@ window.browser = {
     sendMessage: function () {}, // TODO
     query: function () {} // TODO
   },
-  windows:{
+  windows: {
     WINDOW_ID_CURRENT: 'foo' // TODO
   }
 }

@@ -14,7 +14,7 @@ const {
   focusEventTargetIO,
   dispatchActionIO,
   sendToBackgroundIO,
-  updateStateIO,
+  updateStateIO
 } = require('./io')
 
 const {

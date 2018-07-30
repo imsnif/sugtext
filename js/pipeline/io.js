@@ -1,4 +1,4 @@
-const { curry, path } = require('ramda')
+const { curry } = require('ramda')
 const { offset } = require('caret-pos')
 const insertTextAtCursor = require('insert-text-at-cursor')
 const { sendToBackground } = require('../util/msg-bus')
@@ -44,7 +44,7 @@ module.exports = {
     })
   })),
   getSelectedTextareaCurPosIO: el => tryCatchify(() => {
-    if (typeof(el.selectionStart) === 'undefined' || typeof(el.selectionEnd) === 'undefined') {
+    if (typeof (el.selectionStart) === 'undefined' || typeof (el.selectionEnd) === 'undefined') {
       throw new Error('element has no start and end positions')
     } else {
       return {start: el.selectionStart, end: el.selectionEnd}

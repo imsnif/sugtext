@@ -5,26 +5,26 @@ module.exports = {
       detail: {
         type, data
       }
-    });
-    const el = target.el || target;
+    })
+    const el = target.el || target
 
-    el.dispatchEvent(event);
+    el.dispatchEvent(event)
   },
   listen: (target, handlers) => {
-    const el = target.el || target;
+    const el = target.el || target
 
     const handler = e => {
-      const { type, data } = e.detail;
+      const { type, data } = e.detail
 
-      handlers[type] && handlers[type](data);
-    };
+      handlers[type] && handlers[type](data)
+    }
 
-    el.addEventListener('redom', handler);
+    el.addEventListener('redom', handler)
 
     return {
       destroy () {
-        el.removeEventListener('redom', handler);
+        el.removeEventListener('redom', handler)
       }
-    };
+    }
   }
 }

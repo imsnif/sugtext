@@ -9,11 +9,11 @@ function bundle (path) {
   return new Promise((resolve, reject) => {
     let data = ''
     const stream = browserify(path)
-    .transform(babelify, {plugins: ['transform-async-to-generator']})
-    .transform(aliasify, {aliases: {
-      '../common-words.json': './test/fixtures/stub-words.json'
-    }})
-    .bundle()
+      .transform(babelify, {plugins: ['transform-async-to-generator']})
+      .transform(aliasify, {aliases: {
+        '../common-words.json': './test/fixtures/stub-words.json'
+      }})
+      .bundle()
     stream.on('data', d => {
       data += d
     })
@@ -29,7 +29,7 @@ module.exports = {
     const contentPage = await browser.newPage()
     backgroundPage.on('console', msg => console.log('BACKGROUND-PAGE LOG:', msg.text()))
     backgroundPage.on('pageerror', err => console.error('BACKGROUND-PAGE ERROR:', err.toString()))
-    await backgroundPage.goto('https://example.com');
+    await backgroundPage.goto('https://example.com')
     contentPage.on('console', msg => console.log('CONTENT-PAGE LOG:', msg.text()))
     contentPage.on('pageerror', err => console.error('CONTENT-PAGE ERROR:', err.toString()))
     await backgroundPage.addScriptTag({path: `${__dirname}/../mocks/stub-firefox-background.js`})

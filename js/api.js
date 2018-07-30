@@ -4,9 +4,7 @@ const { Identity } = require('monet')
 const { listen } = require('./util/dispatch')
 const listeners = require('./listeners')
 const observe = require('./util/observe-dom')
-const updateQueue = require('./util/update-queue')
 const Store = require('@redom/store')
-const { position, offset } = require('caret-pos')
 const { observeBackground } = require('./util/msg-bus')
 
 const {
@@ -14,8 +12,7 @@ const {
   getClientSize,
   updateState,
   updateStateFromCtx,
-  getAppSize,
-  getWindowSelection
+  getAppSize
 } = require('./pipeline/transforms')
 const {
   formatSuggestions,
@@ -29,7 +26,7 @@ const initCtx = Identity
 const noop = () => {}
 
 module.exports = (app) => {
-  const store = new Store();
+  const store = new Store()
   const id = uuid()
   const updateAppState = updateState(store, app)
   const updateAppStateFromCtx = updateStateFromCtx(store, app)

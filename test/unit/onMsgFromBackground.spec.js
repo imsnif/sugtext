@@ -1,18 +1,17 @@
 'use strict'
 
 const test = require('tape')
-const { mockStore, mockEvent, getStubbedListeners } = require('../mocks/pipelines')
+const { mockStore, getStubbedListeners } = require('../mocks/pipelines')
 
 test('UNIT => listeners => onMsgFromBackground => updates suggestions and shows box', t => {
   t.plan(2)
   try {
     const {
       listeners,
-      dispatchAction,
+      dispatchAction
     } = getStubbedListeners()
     const store = mockStore({})
     const app = 'app'
-    const e = mockEvent({key: 'w'})
     const id = 'foo'
     const appId = id
     const suggestions = 'suggestions'
@@ -31,11 +30,10 @@ test('UNIT => listeners => onMsgFromBackground => noop when not my id', t => {
   try {
     const {
       listeners,
-      dispatchAction,
+      dispatchAction
     } = getStubbedListeners()
     const store = mockStore({})
     const app = 'app'
-    const e = mockEvent({key: 'w'})
     const id = 'foo'
     const appId = 'not foo'
     const suggestions = 'suggestions'

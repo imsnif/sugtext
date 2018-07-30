@@ -1,3 +1,5 @@
+/* global browser */
+
 'use strict'
 
 const commonEnglishWords = require('../common-words.json')
@@ -36,7 +38,7 @@ async function getExistingWord (word) {
 }
 
 async function addUserWord (newWord) {
-  const trimmedWord = newWord.replace(/[,|.|!|\?]+$/, '')
+  const trimmedWord = newWord.replace(/[,|.|!|?]+$/, '')
   const existing = await getExistingWord(trimmedWord)
   const updated = {_id: trimmedWord, score: (existing.score || 0) + 1}
   await userWordsDb.put(Object.assign({}, existing, updated))
@@ -58,9 +60,9 @@ async function queryForWords (db, searchterm) {
     include_docs: true
   })
   return matches.rows
-  .filter(m => m.id.length >= (searchterm.length + 2))
-  .sort((a, b) => a.doc.score < b.doc.score)
-  .slice(0, 5).map(m => m.id)
+    .filter(m => m.id.length >= (searchterm.length + 2))
+    .sort((a, b) => a.doc.score < b.doc.score)
+    .slice(0, 5).map(m => m.id)
 }
 
 async function findWords (searchterm) {

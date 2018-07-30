@@ -2,7 +2,6 @@ const {
   curry,
   merge,
   prop,
-  find,
   findIndex,
   last,
   split,
@@ -12,9 +11,6 @@ const {
 } = require('ramda')
 
 const {
-  replaceSearchterm,
-  calculateCursorPosition,
-  lastWordUpToCursor,
   extractChosenWord
 } = require('./text-manipulation')
 
@@ -38,10 +34,10 @@ module.exports = {
     const selectedIndex = direction === 'ArrowUp' && currentSelected > 0
       ? currentSelected - 1
       : direction === 'ArrowUp' && currentSelected === 0
-      ? ctx.suggestions.length - 1
-      : direction === 'ArrowDown' && currentSelected < ctx.suggestions.length
-      ? currentSelected + 1
-      : 0
+        ? ctx.suggestions.length - 1
+        : direction === 'ArrowDown' && currentSelected < ctx.suggestions.length
+          ? currentSelected + 1
+          : 0
     const selectedSuggestions = ctx.suggestions.map(({word}, i) => {
       return {word, selected: i === selectedIndex}
     })
