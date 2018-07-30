@@ -7,7 +7,7 @@ const observe = require('./util/observe-dom')
 const updateQueue = require('./util/update-queue')
 const Store = require('@redom/store')
 const { position, offset } = require('caret-pos')
-const { sendToBackground, observeBackground } = require('./util/msg-bus')
+const { observeBackground } = require('./util/msg-bus')
 
 const {
   getStoreKeyValue,

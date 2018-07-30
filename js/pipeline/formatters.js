@@ -48,21 +48,27 @@ module.exports = {
     return merge(ctx, {selectedSuggestions})
   }),
   calcBoxHorizontalInverse: curry((off, ctx) => {
-    const inverseHorizontal = (off.left + ctx.appSize.width) >= ctx.clientSize.clientWidth
+    const { clientSize, appSize } = ctx
+    const { left } = off
+    const inverseHorizontal = (left + appSize.width) >= clientSize.clientWidth
     return merge(ctx, {inverseHorizontal})
   }),
   calcBoxVerticalInverse: curry((off, ctx) => {
-    const inverseVertical = (off.top + off.height + ctx.appSize.height) >= ctx.clientSize.clientHeight
+    const { appSize, clientSize } = ctx
+    const { top, height } = off
+    const inverseVertical = (top + height + appSize.height) >= clientSize.clientHeight
     return merge(ctx, {inverseVertical})
   }),
   calcBoxPos: curry((off, ctx) => {
+    const { inverseHorizontal, inverseVertical, clientSize, appSize } = ctx
+    const { left, top, height } = off
     const boxPos = {
-      left: ctx.inverseHorizontal
-        ? ctx.clientSize.clientWidth - ctx.appSize.width
-        : off.left,
-      top: ctx.inverseVertical
-        ? off.top - ctx.appSize.height
-        : off.top + off.height
+      left: inverseHorizontal
+        ? clientSize.clientWidth - appSize.width
+        : left,
+      top: inverseVertical
+        ? top - appSize.height
+        : top + height
     }
     return merge(ctx, {boxPos})
   }),
