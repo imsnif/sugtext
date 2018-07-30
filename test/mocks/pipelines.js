@@ -74,5 +74,49 @@ module.exports = {
       './pipeline/formatters': formatters
     })
     return mergeAll([{listeners}, transforms, formatters])
+  },
+  mockApi ({app, store, el}) {
+    const transforms = {
+      getStoreKeyValue: currySpy((store, key, ctx) => Right(merge(ctx, {[key]: store.get(key)}))),
+      getClientSize: sinon.spy(ctx => Right(ctx)),
+      getAppSize: currySpy((app, ctx) => Right(ctx)),
+      updateState: currySpy((app, store, type, val, ctx) => Right(ctx)),
+      updateStateFromCtx: currySpy((app, store, ctxKey, key, ctx) => Right(ctx))
+    }
+    const formatters = {
+      calcBoxHorizontalInverse: currySpy((off, ctx) => ctx),
+      calcBoxVerticalInverse: currySpy((off, ctx) => ctx),
+      calcBoxPos: currySpy((off, ctx) => ctx),
+      formatSuggestions: currySpy((suggestions, ctx) => ctx),
+      findNewSelectedSuggestions: currySpy((direction, ctx) => ctx)
+    }
+    const listeners = {
+      onKeyDown: sinon.spy(),
+      onBlur: sinon.spy(),
+      onKeypress: sinon.spy(),
+      onMsgFromBackground: sinon.spy()
+    }
+    const listen = sinon.spy()
+    const dispatch = {listen}
+    const observe = sinon.stub()
+    const observeBackground = sinon.spy()
+    if (el) observe.callsArgWith(1, el)
+    const api = proxyquire('../../js/api', {
+      './pipeline/transforms': transforms,
+      './pipeline/formatters': formatters,
+      './util/dispatch': dispatch,
+      '@redom/store': function () { return store },
+      './util/msg-bus': {observeBackground},
+      './listeners': () => listeners,
+      './util/observe-dom': observe
+    })
+    api(app)
+    const methods = listen.firstCall.args[1]
+    return mergeAll([transforms, formatters, methods, listeners, {observe, observeBackground}])
+  },
+  mockDomElement () {
+    return {
+      addEventListener: sinon.spy()
+    }
   }
 }
