@@ -2,7 +2,7 @@
 
 const test = require('tape')
 const sinon = require('sinon')
-const { mockStore, mockListeners } = require('../mocks/pipelines')
+const { mockStore, getStubbedListeners } = require('../mocks/pipelines')
 
 test('UNIT => listeners => onBlur => hides box onNextTick', async t => {
   t.plan(2)
@@ -11,7 +11,7 @@ test('UNIT => listeners => onBlur => hides box onNextTick', async t => {
     const {
       listeners,
       dispatchAction
-    } = mockListeners()
+    } = getStubbedListeners()
     const store = mockStore({})
     const app = 'app'
     const id = 'foo'

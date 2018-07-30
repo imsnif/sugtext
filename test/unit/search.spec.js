@@ -1,7 +1,7 @@
 'use strict'
 
 const test = require('tape')
-const { mockStore, mockEvent, mockApi, mockDomElement } = require('../mocks/pipelines')
+const { mockStore, mockEvent, stubApi, mockDomElement } = require('../mocks/pipelines')
 
 test('UNIT => api => search => updates app state with searchterm', t => {
   t.plan(1)
@@ -13,7 +13,7 @@ test('UNIT => api => search => updates app state with searchterm', t => {
     const {
       search,
       updateState
-    } = mockApi({app, store})
+    } = stubApi({app, store})
     search(searchterm)
     t.ok(
       updateState.calledWith(store, app, 'searchterm', searchterm),
@@ -40,7 +40,7 @@ test('UNIT => api => position => updates app state properly', t => {
       calcBoxVerticalInverse,
       calcBoxPos,
       updateStateFromCtx
-    } = mockApi({app, store})
+    } = stubApi({app, store})
     position(off)
     t.ok(
       getClientSize.calledWith({}),
@@ -125,7 +125,7 @@ test('UNIT => api => visibility => updates app state with visibility', t => {
     const {
       visibility,
       updateState
-    } = mockApi({app, store})
+    } = stubApi({app, store})
     visibility(val)
     t.ok(
       updateState.calledWith(store, app, 'visibility', val),
@@ -149,7 +149,7 @@ test('UNIT => api => suggest => updates app state with formatted suggestions', t
       getStoreKeyValue,
       formatSuggestions,
       updateStateFromCtx
-    } = mockApi({app, store})
+    } = stubApi({app, store})
     suggest(suggestions)
     t.ok(
       getStoreKeyValue.calledWith(store, 'inverseSelection', {}),
@@ -189,7 +189,7 @@ test('UNIT => api => moveSelection => updates app state with new selected sugges
       getStoreKeyValue,
       findNewSelectedSuggestions,
       updateStateFromCtx
-    } = mockApi({app, store})
+    } = stubApi({app, store})
     moveSelection(direction)
     t.ok(
       getStoreKeyValue.calledWith(store, 'suggestions', {}),
@@ -230,7 +230,7 @@ test('UNIT => api => observe => DOM element observed properly', t => {
       onBlur,
       onKeypress,
       onKeyDown
-    } = mockApi({app, store, el})
+    } = stubApi({app, store, el})
     t.ok(
       observe.calledWith(observationSelector),
       'DOM queried for desired elements'
@@ -263,7 +263,7 @@ test('UNIT => api => observeBackground => background observed properly', t => {
     const {
       observeBackground,
       onMsgFromBackground
-    } = mockApi({app, store, el})
+    } = stubApi({app, store, el})
     t.ok(
       observeBackground.calledWith(onMsgFromBackground),
       'background observed with onMsgFromBackground listener'

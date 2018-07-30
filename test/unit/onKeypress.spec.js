@@ -1,7 +1,7 @@
 'use strict'
 
 const test = require('tape')
-const { mockStore, mockEvent, mockListeners } = require('../mocks/pipelines')
+const { mockStore, mockEvent, getStubbedListeners } = require('../mocks/pipelines')
 
 test('UNIT => listeners => onKeypress => letter => sends search to background', t => {
   t.plan(17)
@@ -22,7 +22,7 @@ test('UNIT => listeners => onKeypress => letter => sends search to background', 
       dispatchPosition,
       dispatchSearchterm,
       sendSearchtermToBackground
-    } = mockListeners()
+    } = getStubbedListeners()
     const store = mockStore(state)
     const app = 'app'
     const e = mockEvent({key: 'w'})
@@ -95,7 +95,7 @@ test('UNIT => listeners => onKeypress => number => sends search to background', 
       dispatchPosition,
       dispatchSearchterm,
       sendSearchtermToBackground
-    } = mockListeners()
+    } = getStubbedListeners()
     const store = mockStore(state)
     const app = 'app'
     const e = mockEvent({key: 4})
@@ -168,7 +168,7 @@ test('UNIT => listeners => onKeypress => letter => noop when altKey', t => {
       dispatchPosition,
       dispatchSearchterm,
       sendSearchtermToBackground
-    } = mockListeners()
+    } = getStubbedListeners()
     const store = mockStore(state)
     const app = 'app'
     const e = mockEvent({key: 'w', altKey: true})
@@ -209,7 +209,7 @@ test('UNIT => listeners => onKeypress => letter => noop when ctrlKey', t => {
       dispatchPosition,
       dispatchSearchterm,
       sendSearchtermToBackground
-    } = mockListeners()
+    } = getStubbedListeners()
     const store = mockStore(state)
     const app = 'app'
     const e = mockEvent({key: 'w', ctrlKey: true})
@@ -250,7 +250,7 @@ test('UNIT => listeners => onKeypress => letter => noop when metaKey', t => {
       dispatchPosition,
       dispatchSearchterm,
       sendSearchtermToBackground
-    } = mockListeners()
+    } = getStubbedListeners()
     const store = mockStore(state)
     const app = 'app'
     const e = mockEvent({key: 'w', metaKey: true})
@@ -288,7 +288,7 @@ test('UNIT => listeners => onKeypress => space => hides box and sends word to ba
       findSearchterm,
       sendNewWordToBackground,
       dispatchAction
-    } = mockListeners()
+    } = getStubbedListeners()
     const store = mockStore(state)
     const app = 'app'
     const e = mockEvent({key: ' '})
@@ -343,7 +343,7 @@ test('UNIT => listeners => onKeypress => space => noop if altKey', t => {
       findSearchterm,
       sendNewWordToBackground,
       dispatchAction
-    } = mockListeners()
+    } = getStubbedListeners()
     const store = mockStore(state)
     const app = 'app'
     const e = mockEvent({key: ' ', altKey: true})

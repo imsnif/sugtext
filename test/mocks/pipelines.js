@@ -48,7 +48,7 @@ module.exports = {
       target: 'bar'
     }
   },
-  mockListeners () {
+  getStubbedListeners () {
     const transforms = {
       getWindowSelection: sinon.spy(ctx => Right(ctx)),
       getCurrentCursorPos: currySpy((e, ctx) => Right(ctx)),
@@ -75,7 +75,7 @@ module.exports = {
     })
     return mergeAll([{listeners}, transforms, formatters])
   },
-  mockApi ({app, store, el}) {
+  stubApi ({app, store, el}) {
     const transforms = {
       getStoreKeyValue: currySpy((store, key, ctx) => Right(merge(ctx, {[key]: store.get(key)}))),
       getClientSize: sinon.spy(ctx => Right(ctx)),

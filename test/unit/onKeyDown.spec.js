@@ -1,7 +1,7 @@
 'use strict'
 
 const test = require('tape')
-const { mockStore, mockEvent, mockListeners } = require('../mocks/pipelines')
+const { mockStore, mockEvent, getStubbedListeners } = require('../mocks/pipelines')
 
 test('UNIT => listeners => onKeyDown => Tab => completes word', t => {
   t.plan(7)
@@ -18,7 +18,7 @@ test('UNIT => listeners => onKeyDown => Tab => completes word', t => {
       dispatchAction,
       sendAcceptedToBackground,
       findTextToInsert
-    } = mockListeners()
+    } = getStubbedListeners()
     const store = mockStore(state)
     const app = 'app'
     const e = mockEvent({key: 'Tab'})
@@ -84,7 +84,7 @@ test('UNIT => listeners => onKeyDown => Tab => noop when store is not visible', 
       dispatchAction,
       sendAcceptedToBackground,
       findTextToInsert
-    } = mockListeners()
+    } = getStubbedListeners()
     const store = mockStore(state)
     const app = 'app'
     const e = mockEvent({key: 'Tab'})
@@ -112,7 +112,7 @@ test('UNIT => listeners => onKeyDown => ArrowDown => moves one suggestion down',
       listeners,
       focusEventTarget,
       dispatchAction
-    } = mockListeners()
+    } = getStubbedListeners()
     const store = mockStore(state)
     const app = 'app'
     const e = mockEvent({key: 'ArrowDown'})
@@ -140,7 +140,7 @@ test('UNIT => listeners => onKeyDown => ArrowUp => moves one suggestion up', t =
       listeners,
       focusEventTarget,
       dispatchAction
-    } = mockListeners()
+    } = getStubbedListeners()
     const store = mockStore(state)
     const app = 'app'
     const e = mockEvent({key: 'ArrowUp'})
@@ -168,7 +168,7 @@ test('UNIT => listeners => onKeyDown => ArrowUp/ArrowDown => noop if store is hi
       listeners,
       focusEventTarget,
       dispatchAction
-    } = mockListeners()
+    } = getStubbedListeners()
     const store = mockStore(state)
     const app = 'app'
     const e = mockEvent({key: 'ArrowUp'})
@@ -192,7 +192,7 @@ test('UNIT => listeners => onKeyDown => Escape => hides box', t => {
     const {
       listeners,
       dispatchAction
-    } = mockListeners()
+    } = getStubbedListeners()
     const store = mockStore(state)
     const app = 'app'
     const e = mockEvent({key: 'Escape'})
