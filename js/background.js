@@ -3,10 +3,9 @@
 'use strict'
 
 const commonEnglishWords = require('../common-words.json')
-const PouchDB = require('pouchdb')
 
-const commonWordsDb = new PouchDB('words')
-const userWordsDb = new PouchDB('userWords')
+const commonWordsDb = require('./dbs/common')
+const userWordsDb = require('./dbs/user')
 
 function initDbs () {
   const wordDocs = commonEnglishWords.map((w, i) => {
@@ -45,7 +44,7 @@ async function addUserWord (newWord) {
 }
 
 async function generateSuggestions (searchterm, appId) {
-  const tabs = await browser.tabs.query({active: true, windowId: browser.windows.WINDOW_ID_CURRENT})
+  const tabs = await browser.tabs.query({active: true, currentWindow: true})
   const tabId = tabs[0].id
   const suggestions = await findWords(searchterm)
   if (suggestions.length > 0) {
