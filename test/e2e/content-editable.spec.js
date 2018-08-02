@@ -16,6 +16,7 @@ test('contentEditable - suggest completions', async t => {
     const textboxEl = await contentPage.$('#completeme')
     await textboxEl.type('thi', {delay: 100})
     const captured = await contentPage.screenshot()
+    await fs.writeFileSync('/tmp/captured.png', captured)
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-suggest-completions.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')

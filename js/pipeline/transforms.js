@@ -1,5 +1,7 @@
-const { Left } = require('monet')
-const { curry, merge } = require('ramda')
+const Future = require('fluture')
+const { Identity, Maybe, Left } = require('monet')
+const R = require('ramda')
+const { curry, merge } = R
 
 const {
   getWindowSelectionIO,
@@ -100,5 +102,25 @@ module.exports = {
     const { searchterm } = ctx
     const send = sendToBackgroundIO({appId, newWord: searchterm})
     return returnCtx(send, ctx)
+  }),
+  maybePropToCtx: R.curry((prop, obj, ctx) => {
+    return Identity(obj)
+      .chain(R.compose(
+        Maybe.fromNull,
+        R.prop(prop)
+      ))
+      .map(R.compose(
+        R.merge(ctx),
+        R.objOf(prop)
+      ))
+      .orElse(Future.reject())
+  }),
+  readParallelToCtx: R.curry((parallelTasks, ctx) => {
+    return Future.parallel(parallelTasks.length,
+      parallelTasks.map(t => t(ctx))
+    ).map(R.compose(
+      R.merge(ctx),
+      R.mergeAll
+    ))
   })
 }
