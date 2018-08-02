@@ -5,6 +5,9 @@ const sinon = require('sinon')
 
 const { curryN, merge, mergeAll } = require('ramda')
 const { Right } = require('monet')
+const { Future } = require('fluture')
+const { EventEmitter } = require('events')
+const R = require('ramda')
 
 function currySpy (fn) {
   const spy = sinon.spy()
@@ -113,6 +116,53 @@ module.exports = {
     api(app)
     const methods = listen.firstCall.args[1]
     return mergeAll([transforms, formatters, methods, listeners, {observe, observeBackground}])
+  },
+  stubBackground ({initDbs = sinon.spy(), commonEnglishWords = {}}) {
+    const emitter = new EventEmitter()
+    global.browser = {
+      runtime: {
+        onMessage: {
+          addListener: func => emitter.on('msg', func)
+        }
+      }
+    }
+    const transforms = {
+      maybePropToCtx: currySpy((prop, obj, ctx) => obj[prop]
+        ? Right(ctx)
+        : Future.reject(null)
+      ),
+      readParallelToCtx: R.curry((parallelTasks, ctx) => {
+        parallelTasks.map(t => t(ctx))
+        return Future.of(ctx)
+      })
+    }
+    const findSuggestions = {
+      populateSuggestions: sinon.spy(ctx => Right(ctx))
+    }
+    const browserTabs = {
+      populateActiveTab: sinon.spy(ctx => Right(ctx)),
+      sendToTab: sinon.spy((suggestions, tabId, appId) => Future.of({}))
+    }
+    const updateUserWords = {
+      trimNewWord: sinon.spy(ctx => ctx),
+      calcWordScore: sinon.spy(newWord => Future.of(newWord)),
+      writeWordToUserDb: sinon.spy(newWord => Future.of(newWord))
+    }
+    proxyquire('../../js/background', {
+      './features/init-dbs': {initDbs},
+      '../common-words.json': commonEnglishWords,
+      './pipeline/transforms': transforms,
+      './features/find-suggestions': findSuggestions,
+      './features/browser-tabs': browserTabs,
+      './features/update-user-words': updateUserWords
+    })
+    return mergeAll([
+      {background: {sendMessage: msg => emitter.emit('msg', msg)}},
+      transforms,
+      findSuggestions,
+      browserTabs,
+      updateUserWords
+    ])
   },
   mockDomElement () {
     return {
