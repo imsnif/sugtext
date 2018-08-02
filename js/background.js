@@ -5,7 +5,7 @@
 const { Identity } = require('monet')
 
 const { maybePropToCtx, readParallelToCtx } = require('./pipeline/transforms')
-const { populateSuggestions } = require('./features/query-dbs')
+const { populateSuggestions } = require('./features/find-suggestions')
 const { populateActiveTab, sendToTab } = require('./features/browser-tabs')
 const {
   trimNewWord,
