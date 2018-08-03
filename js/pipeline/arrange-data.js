@@ -11,7 +11,7 @@ module.exports = {
       return text
     }
   }),
-  getPosFromSelection: selection => tryCatchify(() => { // TODO: move elsewhere, this is not io
+  getPosFromSelection: selection => tryCatchify(() => {
     if (!selection) {
       throw new Error('no selection to get cursor position from')
     } else {
