@@ -31,11 +31,12 @@ module.exports = {
   }),
   findNewSelectedSuggestions: curry((direction, ctx) => {
     const currentSelected = findIndex(prop('selected'), ctx.suggestions)
+    const highestIndex = ctx.suggestions.length - 1
     const selectedIndex = direction === 'ArrowUp' && currentSelected > 0
       ? currentSelected - 1
       : direction === 'ArrowUp' && currentSelected === 0
-        ? ctx.suggestions.length - 1
-        : direction === 'ArrowDown' && currentSelected < ctx.suggestions.length
+        ? highestIndex
+        : direction === 'ArrowDown' && currentSelected < highestIndex
           ? currentSelected + 1
           : 0
     const selectedSuggestions = ctx.suggestions.map(({word}, i) => {
