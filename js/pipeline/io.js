@@ -58,6 +58,9 @@ module.exports = {
     }
   }),
   updateTextNodeIO: curry((el, textToInsert) => tryCatchify(() => {
+    if (!el) {
+      throw new Error('no el to insert text into')
+    }
     insertTextAtCursor(el, textToInsert)
   })),
   focusEventTargetIO: e => tryCatchify(() => {
