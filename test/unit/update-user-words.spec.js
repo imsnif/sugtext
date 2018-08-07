@@ -1,6 +1,6 @@
 const test = require('tape')
 const sinon = require('sinon')
-const proxyquire = require('proxyquire')
+const proxyquire = require('proxyquire').noCallThru()
 
 function getStubbedUpdateWords ({userWordsDb = {}}) {
   return proxyquire('../../js/features/update-user-words', {
