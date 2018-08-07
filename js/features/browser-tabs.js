@@ -12,7 +12,7 @@ module.exports = {
   },
   populateActiveTab () {
     return Future
-      .try(() => browser.tabs.query({active: true, currentWindow: true}))
+      .tryP(() => browser.tabs.query({active: true, currentWindow: true}))
       .map(tabs => tabs[0].id)
       .map(R.objOf('tabId'))
   }
