@@ -12,7 +12,7 @@ window.browser = {
       window.sendToContentPage(...msg)
     },
     query: function () {
-      return [{id: 1}]
+      return Promise.resolve([{id: 1}])
     }
   },
   windows: {

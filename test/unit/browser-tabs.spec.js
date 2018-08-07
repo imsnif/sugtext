@@ -65,7 +65,7 @@ test('UNIT => populateActiveTab() => returns active tab id', t => {
     const rawTabInfo = [{id: 0}, {id: 1}]
     const query = sinon.stub()
       .withArgs({active: true, currentWindow: true})
-      .returns(rawTabInfo)
+      .returns(Promise.resolve(rawTabInfo))
     stubBrowser({query})
     populateActiveTab()
       .fork(t.fail, ret => {
