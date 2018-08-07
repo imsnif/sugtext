@@ -77,7 +77,9 @@ module.exports = {
   }),
   updateStateFromCtx: curry((app, store, ctxKey, key, ctx) => {
     const value = ctx[ctxKey]
-    if (typeof value === 'undefined') return Left(`no such value ${ctxKey} in ctx`)
+    if (typeof value === 'undefined') {
+      return Left(new Error(`no such value ${ctxKey} in ctx`))
+    }
     return returnCtx(updateStateIO(app, store, key, value), ctx)
   }),
   dispatchSearchterm: curry((app, ctx) => {
