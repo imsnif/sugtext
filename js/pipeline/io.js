@@ -39,8 +39,8 @@ module.exports = {
       el.type === 'textarea' ? undefined : {noShadowCaret: true}
     )
     return Object.assign({}, elOffset, {
-      left: elOffset.left - pageScroll.x,
-      top: elOffset.top - pageScroll.y
+      left: elOffset.left - pageScroll.x - el.scrollLeft, // TODO: different io
+      top: elOffset.top - pageScroll.y - el.scrollTop
     })
   })),
   getSelectedTextareaCurPosIO: el => tryCatchify(() => {

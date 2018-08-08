@@ -198,7 +198,11 @@ test(
   t => {
     t.plan(1)
     try {
-      const el = {type: 'textarea'}
+      const el = {
+        type: 'textarea',
+        scrollTop: 18,
+        scrollLeft: 11
+      }
       const pageScroll = {
         x: 5,
         y: 91
@@ -214,8 +218,8 @@ test(
         .cata(
           e => t.fail('io failed'),
           offset => t.deepEquals(offset, Object.assign({}, elOffset, {
-            left: elOffset.left - pageScroll.x,
-            top: elOffset.top - pageScroll.y
+            left: elOffset.left - pageScroll.x - el.scrollLeft,
+            top: elOffset.top - pageScroll.y - el.scrollTop
           }), 'offset properly merged')
         )
     } catch (e) {
@@ -231,7 +235,11 @@ test(
   t => {
     t.plan(1)
     try {
-      const el = {type: 'contentEditable'}
+      const el = {
+        type: 'contentEditable',
+        scrollTop: 18,
+        scrollLeft: 11
+      }
       const pageScroll = {
         x: 5,
         y: 91
@@ -250,8 +258,8 @@ test(
         .cata(
           e => t.fail('io failed'),
           offset => t.deepEquals(offset, Object.assign({}, elOffset, {
-            left: elOffset.left - pageScroll.x,
-            top: elOffset.top - pageScroll.y
+            left: elOffset.left - pageScroll.x - el.scrollLeft,
+            top: elOffset.top - pageScroll.y - el.scrollTop
           }), 'offset properly merged')
         )
     } catch (e) {
