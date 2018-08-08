@@ -218,7 +218,7 @@ test('UNIT => api => moveSelection => updates app state with new selected sugges
 })
 
 test('UNIT => api => observe => DOM element observed properly', t => {
-  t.plan(4)
+  t.plan(5)
   try {
     const observationSelector = 'div[contenteditable="true"],textarea'
     const state = {}
@@ -238,6 +238,10 @@ test('UNIT => api => observe => DOM element observed properly', t => {
     t.ok(
       el.addEventListener.calledWith('blur', onBlur),
       'onBlur action registered properly'
+    )
+    t.ok(
+      el.addEventListener.calledWith('click', onBlur),
+      'onBlur action registered onClick'
     )
     t.ok(
       el.addEventListener.calledWith('keypress', onKeypress),

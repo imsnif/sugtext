@@ -76,6 +76,7 @@ module.exports = (app) => {
   })
   observe('div[contenteditable="true"],textarea', el => {
     el.addEventListener('blur', onBlur)
+    el.addEventListener('click', onBlur) // TODO: rename function
     el.addEventListener('keypress', onKeypress)
     el.addEventListener('keydown', onKeyDown)
   })
