@@ -10,6 +10,8 @@ const {
   toLower
 } = require('ramda')
 
+const R = require('ramda')
+
 const {
   extractChosenWord
 } = require('./text-manipulation')
@@ -22,23 +24,29 @@ module.exports = {
     return merge(ctx, {textToInsert: chosenWord.replace(re, '')})
   },
   formatSuggestions: curry((suggestions, ctx) => {
+    const mapIndex = R.addIndex(R.map)
+    const padSuggestions = suggestions => R.insertAll(
+      0,
+      R.repeat({}, 5 - suggestions.length),
+      suggestions
+    )
     const orderedSuggestions = ctx.inverseSelection
-      ? Array.from(suggestions)
-        .reverse()
-        .map((word, i) => ({word, selected: i === suggestions.length - 1}))
+      ? R.compose(
+        padSuggestions,
+        mapIndex((word, i) => ({word, selected: i === suggestions.length - 1})),
+        R.reverse
+      )(suggestions)
       : suggestions.map((word, i) => ({word, selected: i === 0}))
     return merge(ctx, {orderedSuggestions})
   }),
   findNewSelectedSuggestions: curry((direction, ctx) => {
     const currentSelected = findIndex(prop('selected'), ctx.suggestions)
+    const nonPaddedSuggestions = ctx.suggestions.filter(sug => sug.word)
     const highestIndex = ctx.suggestions.length - 1
-    const selectedIndex = direction === 'ArrowUp' && currentSelected > 0
-      ? currentSelected - 1
-      : direction === 'ArrowUp' && currentSelected === 0
-        ? highestIndex
-        : direction === 'ArrowDown' && currentSelected < highestIndex
-          ? currentSelected + 1
-          : 0
+    const lowestIndex = highestIndex - (nonPaddedSuggestions.length - 1)
+    const selectedIndex = direction === 'ArrowUp'
+      ? (currentSelected > lowestIndex ? currentSelected - 1 : highestIndex)
+      : (currentSelected < highestIndex ? currentSelected + 1 : lowestIndex)
     const selectedSuggestions = ctx.suggestions.map(({word}, i) => {
       return {word, selected: i === selectedIndex}
     })

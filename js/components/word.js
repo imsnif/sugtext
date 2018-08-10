@@ -18,11 +18,16 @@ class Word {
     this.el = el('li')
   }
   update ({word, selected}) {
-    this.el.textContent = word
-    const styleData = selected ? style.selected : style.unselected
-    this.el.style.backgroundColor = styleData.backgroundColor
-    this.el.style.borderLeft = styleData.borderLeft
-    this.el.style.color = styleData.color
+    if (!word) {
+      this.el.style.textContent = 'N/A'
+      this.el.style.visibility = 'hidden'
+    } else {
+      this.el.textContent = word
+      const styleData = selected ? style.selected : style.unselected
+      this.el.style.backgroundColor = styleData.backgroundColor
+      this.el.style.borderLeft = styleData.borderLeft
+      this.el.style.color = styleData.color
+    }
   }
 }
 
