@@ -25,23 +25,29 @@ test('UNIT => listeners => onMsgFromBackground => updates suggestions and shows 
   }
 })
 
-test('UNIT => listeners => onMsgFromBackground => noop when not my id', t => {
-  t.plan(1)
-  try {
-    const {
-      listeners,
-      dispatchAction
-    } = getStubbedListeners()
-    const store = mockStore({})
-    const app = 'app'
-    const id = 'foo'
-    const appId = 'not foo'
-    const suggestions = 'suggestions'
-    const { onMsgFromBackground } = listeners(store, app, id)
-    onMsgFromBackground({appId, suggestions})
-    t.ok(dispatchAction.notCalled, 'no actions dispatched to ui')
-  } catch (e) {
-    t.fail(e)
-    t.end()
+test(
+  'UNIT => listeners => onMsgFromBackground => suggestions hidden when not my id',
+  t => {
+    t.plan(1)
+    try {
+      const {
+        listeners,
+        dispatchAction
+      } = getStubbedListeners()
+      const store = mockStore({})
+      const app = 'app'
+      const id = 'foo'
+      const appId = 'not foo'
+      const suggestions = 'suggestions'
+      const { onMsgFromBackground } = listeners(store, app, id)
+      onMsgFromBackground({appId, suggestions})
+      t.ok(
+        dispatchAction.calledWith(app, 'visibility', 'hidden'),
+        'box hidden'
+      )
+    } catch (e) {
+      t.fail(e)
+      t.end()
+    }
   }
-})
+)
