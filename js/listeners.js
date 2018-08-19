@@ -90,6 +90,10 @@ module.exports = (store, app, id) => {
           .chain(showBox)
           .chain(updateSuggestions(suggestions))
           .cata(console.error, noop)
+      } else {
+        initCtx({})
+          .chain(hideBox)
+          .cata(console.error, noop)
       }
     }
   }
