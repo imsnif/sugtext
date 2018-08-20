@@ -59,6 +59,7 @@ module.exports = {
     return merge(ctx, {inverseHorizontal})
   }),
   calcBoxVerticalInverse: curry((off, ctx) => {
+    // TODO: compensate for pageScroll
     const { appSize, clientSize } = ctx
     const { top, height } = off
     const inverseVertical = (top + height + appSize.height) >= clientSize.clientHeight
