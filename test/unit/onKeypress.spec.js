@@ -4,7 +4,7 @@ const test = require('tape')
 const { mockStore, mockEvent, getStubbedListeners } = require('../mocks/pipelines')
 
 test('UNIT => listeners => onKeypress => letter => sends search to background', t => {
-  t.plan(17)
+  t.plan(19)
   try {
     const state = {
       visibility: 'visible',
@@ -19,6 +19,7 @@ test('UNIT => listeners => onKeypress => letter => sends search to background', 
       getCursorOffset,
       getCurrentText,
       findSearchterm,
+      findLastSpacePosition,
       dispatchPosition,
       dispatchSearchterm,
       sendSearchtermToBackground
@@ -34,6 +35,7 @@ test('UNIT => listeners => onKeypress => letter => sends search to background', 
     t.ok(getWindowScroll.calledWith(e.target, {}), 'window scroll queried')
     t.ok(getCursorOffset.calledWith(e, {}), 'cursor offset queried')
     t.ok(getCurrentText.calledWith(e.target, {}), 'current text queried')
+    t.ok(findLastSpacePosition.calledWith({}), 'last space position queried')
     t.ok(findSearchterm.calledWith(e.key, {}), 'searchterm found')
     t.ok(dispatchPosition.calledWith(app, {}), 'positioned dispatched')
     t.ok(dispatchSearchterm.calledWith(app, {}), 'searchterm dispatched')
@@ -59,6 +61,10 @@ test('UNIT => listeners => onKeypress => letter => sends search to background', 
       'initText placed in ctx before finding searchterm'
     )
     t.ok(
+      getCursorOffset.calledAfter(findLastSpacePosition),
+      'last space pos placed in ctx before getting cursor offset'
+    )
+    t.ok(
       dispatchPosition.calledAfter(getCursorOffset),
       'position (cusror offset) dispatched only after offset placed in ctx'
     )
@@ -77,7 +83,7 @@ test('UNIT => listeners => onKeypress => letter => sends search to background', 
 })
 
 test('UNIT => listeners => onKeypress => number => sends search to background', t => {
-  t.plan(17)
+  t.plan(19)
   try {
     const state = {
       visibility: 'visible',
@@ -92,6 +98,7 @@ test('UNIT => listeners => onKeypress => number => sends search to background', 
       getCursorOffset,
       getCurrentText,
       findSearchterm,
+      findLastSpacePosition,
       dispatchPosition,
       dispatchSearchterm,
       sendSearchtermToBackground
@@ -107,6 +114,7 @@ test('UNIT => listeners => onKeypress => number => sends search to background', 
     t.ok(getWindowScroll.calledWith(e.target, {}), 'window scroll queried')
     t.ok(getCursorOffset.calledWith(e, {}), 'cursor offset queried')
     t.ok(getCurrentText.calledWith(e.target, {}), 'current text queried')
+    t.ok(findLastSpacePosition.calledWith({}), 'last space position queried')
     t.ok(findSearchterm.calledWith(e.key, {}), 'searchterm found')
     t.ok(dispatchPosition.calledWith(app, {}), 'positioned dispatched')
     t.ok(dispatchSearchterm.calledWith(app, {}), 'searchterm dispatched')
@@ -126,6 +134,10 @@ test('UNIT => listeners => onKeypress => number => sends search to background', 
     t.ok(
       findSearchterm.calledAfter(getCurrentCursorPos),
       'initCurPos placed in ctx before finding searchterm'
+    )
+    t.ok(
+      getCursorOffset.calledAfter(findLastSpacePosition),
+      'last space pos placed in ctx before getting cursor offset'
     )
     t.ok(
       findSearchterm.calledAfter(getCurrentText),

@@ -449,3 +449,25 @@ test(
     }
   }
 )
+
+test(
+  'UNIT => findLastSpacePosition(ctx) => ' +
+  'finds last space position and places it in ctx',
+  t => {
+    t.plan(1)
+    try {
+      const initText = 'bar fo bar'
+      const initCurPos = {start: 10, end: 10}
+      const ctx = {initText, initCurPos}
+      const { findLastSpacePosition } = getStubbedFormatters({})
+      t.deepEquals(findLastSpacePosition(ctx),
+        Object.assign({}, ctx, {spacePosition: 7}),
+        'spacePosition set properly in ctx'
+      )
+    } catch (e) {
+      console.error(e.stack)
+      t.fail(e)
+      t.end()
+    }
+  }
+)

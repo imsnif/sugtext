@@ -70,6 +70,7 @@ module.exports = {
     }
     const formatters = {
       findSearchterm: currySpy((lastChar, ctx) => ctx),
+      findLastSpacePosition: sinon.spy(ctx => ctx),
       findTextToInsert: sinon.spy(ctx => ctx)
     }
     const listeners = proxyquire('../../js/listeners', {

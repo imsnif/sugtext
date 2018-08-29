@@ -212,9 +212,10 @@ test(
         left: 8,
         top: 19
       }
-      const offset = sinon.stub().withArgs(el, undefined).returns(elOffset)
+      const spacePosition = 42
+      const offset = sinon.stub().withArgs(el, {customPos: spacePosition}).returns(elOffset)
       const { getCursorOffsetIO } = getStubbedIo({offset})
-      getCursorOffsetIO(el, pageScroll)
+      getCursorOffsetIO(el, pageScroll, spacePosition)
         .cata(
           e => t.fail('io failed'),
           offset => t.deepEquals(offset, Object.assign({}, elOffset, {
@@ -249,12 +250,13 @@ test(
         left: 8,
         top: 19
       }
+      const spacePosition = 42
       const offset = sinon.stub().withArgs(
         el,
-        {noShadowCaret: true}
+        {noShadowCaret: true, customPos: spacePosition}
       ).returns(elOffset)
       const { getCursorOffsetIO } = getStubbedIo({offset})
-      getCursorOffsetIO(el, pageScroll)
+      getCursorOffsetIO(el, pageScroll, spacePosition)
         .cata(
           e => t.fail('io failed'),
           offset => t.deepEquals(offset, Object.assign({}, elOffset, {
