@@ -11,8 +11,7 @@
     "watch-background": "watchify --debug js/background.js -o dist/background.js",
     "test:e2e": "tape ./test/e2e/*.spec.js | tap-spec",
     "test": "standard && tape ./test/unit/*.spec.js | tap-spec",
-    "commitmsg": "commitlint -E GIT_PARAMS",
-    "postinstall": "patch-package"
+    "commitmsg": "commitlint -E GIT_PARAMS"
   },
   "author": "Aram Drevekenin <grimsniffer@gmail.com>",
   "license": "MIT",
@@ -32,7 +31,6 @@
     "eslint-plugin-standard": "^3.1.0",
     "husky": "^0.14.3",
     "looks-same": "^3.3.0",
-    "patch-package": "^5.1.1",
     "proxyquire": "^2.0.1",
     "puppeteer": "^1.5.0",
     "sinon": "^6.1.4",
@@ -42,7 +40,8 @@
   },
   "dependencies": {
     "@redom/store": "~1.0.0",
-    "caret-pos": "^1.1.0",
+    "caret-pos": "^1.2.0",
+    "debounce": "^1.2.0",
     "fluture": "^8.0.2",
     "insert-text-at-cursor": "^0.1.1",
     "monet": "^0.8.10",
