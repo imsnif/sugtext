@@ -8,6 +8,8 @@ const style = {
   position: 'fixed',
   display: 'none',
   backgroundColor: '#7d98a1',
+  boxShadow: '0 0 0.2em 0.2em #7d98a1',
+  borderRadius: '2px',
   zIndex: 10000 // TODO: dynamically
 }
 
