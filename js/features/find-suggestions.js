@@ -17,10 +17,9 @@ const buildQuery = searchterm => ({
 
 const formatResults = searchterm => R.compose(
   R.map(R.prop('id')),
-  R.slice(0, 5),
+  R.slice(0, 1),
   R.reverse,
   R.sortBy(R.path(['doc', 'score'])),
-  R.filter(m => m.id.length >= (searchterm.length + 2)),
   R.prop('rows')
 )
 
@@ -36,7 +35,7 @@ module.exports = {
       dbPriority.length,
       dbPriority.map(db => queryForWords(db, ctx.searchterm))
     )
-      .map(R.compose(R.slice(0, 5), R.uniq, R.flatten))
+      .map(R.compose(R.slice(0, 1), R.uniq, R.flatten))
       .map(R.objOf('suggestions'))
   }
 }

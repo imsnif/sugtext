@@ -6,9 +6,9 @@ const Future = require('fluture')
 const R = require('ramda')
 
 module.exports = {
-  sendToTab (suggestions, tabId, appId) {
+  sendToTab (suggestions, tabId, appId, searchterm) {
     if (suggestions.length === 0) return Future.of()
-    return Future.try(() => browser.tabs.sendMessage(tabId, {appId, suggestions}))
+    return Future.try(() => browser.tabs.sendMessage(tabId, {appId, suggestions, searchterm}))
   },
   populateActiveTab () {
     return Future

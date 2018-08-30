@@ -33,10 +33,12 @@ module.exports = {
   getFromStoreIO: curry((store, key) => {
     return tryCatchify(() => store.get(key))
   }),
-  getCursorOffsetIO: curry((el, pageScroll) => tryCatchify(() => {
+  getCursorOffsetIO: curry((el, pageScroll, spacePosition) => tryCatchify(() => {
     const elOffset = offset(
       el,
-      el.type === 'textarea' ? undefined : {noShadowCaret: true}
+      el.type === 'textarea'
+        ? {customPos: spacePosition}
+        : {customPos: spacePosition, noShadowCaret: true}
     )
     return Object.assign({}, elOffset, {
       left: elOffset.left - pageScroll.x - el.scrollLeft, // TODO: different io

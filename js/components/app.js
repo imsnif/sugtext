@@ -1,22 +1,23 @@
 'use strict'
 
 const { el } = require('redom')
-const { SuggestionBox } = require('./suggestion-box')
-const { InstructionLine } = require('./instruction-line')
+const { Word } = require('./word')
 
 const className = '.sugtext'
 const style = {
   position: 'fixed',
   display: 'none',
+  backgroundColor: '#7d98a1',
   zIndex: 10000 // TODO: dynamically
 }
 
 module.exports = class App {
   constructor () {
-    this.suggestionBox = SuggestionBox()
+    this.searchterm = new Word({type: 'searchterm'})
+    this.completion = new Word({type: 'completion'})
     this.el = el(className,
-      this.suggestionBox,
-      InstructionLine(),
+      this.searchterm,
+      this.completion,
       {style}
     )
   }
@@ -31,8 +32,12 @@ module.exports = class App {
     this.el.style.display = visibility === 'hidden' ? 'none' : 'initial'
   }
   update (data) {
-    const { suggestions, position, visibility } = data
-    if (suggestions) this.suggestionBox.update(suggestions)
+    const { suggestions, position, visibility, searchterm } = data
+    if (suggestions) {
+      const re = new RegExp(`^${searchterm}`)
+      this.searchterm.update(searchterm)
+      this.completion.update(suggestions[0].word.replace(re, ''))
+    }
     if (position) this._updatePosition(position)
     if (visibility) this._updateVisibility(visibility)
   }

@@ -1,5 +1,5 @@
 const Future = require('fluture')
-const { Identity, Maybe, Left } = require('monet')
+const { Identity, Maybe, Left, Right } = require('monet')
 const R = require('ramda')
 const { curry, merge } = R
 
@@ -57,8 +57,8 @@ module.exports = {
     return readToCtx(getAppSizeIO(app), 'appSize', ctx)
   }),
   getCursorOffset: curry((e, ctx) => {
-    const { pageScroll } = ctx
-    const getOffsetVal = getCursorOffsetIO(e.target, pageScroll)
+    const { pageScroll, spacePosition } = ctx
+    const getOffsetVal = getCursorOffsetIO(e.target, pageScroll, spacePosition)
     return readToCtx(getOffsetVal, 'offset', ctx)
   }),
   updateTextNode: curry((el, ctx) => {
@@ -82,8 +82,8 @@ module.exports = {
     }
     return returnCtx(updateStateIO(app, store, key, value), ctx)
   }),
-  dispatchSearchterm: curry((app, ctx) => {
-    const dispatch = dispatchActionIO(app, 'search', ctx.searchterm)
+  dispatchSearchterm: curry((app, searchterm, ctx) => {
+    const dispatch = dispatchActionIO(app, 'search', searchterm)
     return returnCtx(dispatch, ctx)
   }),
   dispatchPosition: curry((app, ctx) => {
@@ -92,7 +92,9 @@ module.exports = {
   }),
   sendSearchtermToBackground: curry((appId, ctx) => {
     const { searchterm } = ctx
-    const send = sendToBackgroundIO({appId, searchterm})
+    const send = searchterm.length >= 2
+      ? sendToBackgroundIO({appId, searchterm})
+      : Right()
     return returnCtx(send, ctx)
   }),
   sendAcceptedToBackground: curry((appId, ctx) => {

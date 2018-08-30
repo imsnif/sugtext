@@ -1,32 +1,34 @@
-const { el } = require('redom')
+const { el, setStyle } = require('redom')
 
 const style = {
-  selected: {
-    backgroundColor: '#3d3f40',
-    borderLeft: '5px solid #3d3f40',
-    color: '#dfff00'
-  },
-  unselected: {
-    backgroundColor: '#7d98a1',
-    borderLeft: '5px solid #7d98a1',
-    color: '#1c2321'
-  }
+  maxWidth: '200px',
+  position: 'relative',
+  margin: 0,
+  paddingLeft: 0,
+  backgroundColor: '#7d98a1',
+  colorSearchterm: '#dfff00',
+  colorCompletion: '#1c2321',
+  display: 'inline-block'
 }
 
 class Word {
   constructor (props) {
-    this.el = el('li')
+    this.el = el('span')
+    this.type = props.type
   }
-  update ({word, selected}) {
+  update (word) {
     if (!word) {
-      this.el.style.textContent = 'N/A'
+      this.el.textContent = ''
       this.el.style.visibility = 'hidden'
     } else {
       this.el.textContent = word
-      const styleData = selected ? style.selected : style.unselected
-      this.el.style.backgroundColor = styleData.backgroundColor
-      this.el.style.borderLeft = styleData.borderLeft
-      this.el.style.color = styleData.color
+      setStyle(this.el, {
+        visibility: 'visible',
+        borderLeft: style.borderLeft,
+        color: this.type === 'searchterm'
+          ? style.colorSearchterm
+          : style.colorCompletion
+      })
     }
   }
 }

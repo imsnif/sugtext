@@ -16,7 +16,11 @@ const {
   sendAcceptedToBackground,
   sendNewWordToBackground
 } = require('./pipeline/transforms')
-const { findTextToInsert, findSearchterm } = require('./pipeline/formatters')
+const {
+  findTextToInsert,
+  findSearchterm,
+  findLastSpacePosition
+} = require('./pipeline/formatters')
 
 const initCtx = Identity
 const noop = () => {}
@@ -66,16 +70,18 @@ module.exports = (store, app, id) => {
           .chain(getWindowSelection)
           .chain(getCurrentCursorPos(e.target))
           .chain(getWindowScroll(e.target))
-          .chain(getCursorOffset(e))
           .chain(getCurrentText(e.target))
+          .map(findLastSpacePosition)
+          .chain(getCursorOffset(e))
           .map(findSearchterm(e.key))
           .chain(dispatchPosition(app))
-          .chain(dispatchSearchterm(app))
           .chain(sendSearchtermToBackground(id))
           .cata(console.error, noop)
       } else if (e.key === ' ') {
         initCtx({})
           .chain(getWindowSelection)
+          .chain(getWindowScroll(e.target))
+          .chain(getCursorOffset(e))
           .chain(getCurrentCursorPos(e.target))
           .chain(getCurrentText(e.target))
           .map(findSearchterm(''))
@@ -84,11 +90,12 @@ module.exports = (store, app, id) => {
           .cata(console.error, noop)
       }
     },
-    onMsgFromBackground ({appId, suggestions}) {
+    onMsgFromBackground ({appId, suggestions, searchterm}) {
       if (appId === id) {
         initCtx({})
           .chain(showBox)
           .chain(updateSuggestions(suggestions))
+          .chain(dispatchSearchterm(app, searchterm))
           .cata(console.error, noop)
       } else {
         initCtx({})

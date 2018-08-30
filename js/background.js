@@ -27,7 +27,12 @@ browser.runtime.onMessage.addListener(msg => {
       populateSuggestions,
       populateActiveTab
     ]))
-    .chain(ctx => sendToTab(ctx.suggestions, ctx.tabId, ctx.appId))
+    .chain(ctx => sendToTab(
+      ctx.suggestions,
+      ctx.tabId,
+      ctx.appId,
+      ctx.searchterm
+    ))
     .fork(consoleIfError, noop)
   Identity({})
     .chain(maybePropToCtx('newWord', msg))

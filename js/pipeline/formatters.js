@@ -93,5 +93,14 @@ module.exports = {
     )
     const lastWord = getLastWord(initText)
     return merge(ctx, {searchterm: lastWord + lastChar})
-  })
+  }),
+  findLastSpacePosition: ctx => {
+    const { initText, initCurPos } = ctx
+    const lastSpacePosition = R.lastIndexOf(' ', initText.slice(0, initCurPos.end))
+    return merge(ctx, {
+      spacePosition: lastSpacePosition === -1
+        ? 0
+        : lastSpacePosition + 1
+    })
+  }
 }
