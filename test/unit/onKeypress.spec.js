@@ -4,7 +4,7 @@ const test = require('tape')
 const { mockStore, mockEvent, getStubbedListeners } = require('../mocks/pipelines')
 
 test('UNIT => listeners => onKeypress => letter => sends search to background', t => {
-  t.plan(19)
+  t.plan(17)
   try {
     const state = {
       visibility: 'visible',
@@ -21,7 +21,6 @@ test('UNIT => listeners => onKeypress => letter => sends search to background', 
       findSearchterm,
       findLastSpacePosition,
       dispatchPosition,
-      dispatchSearchterm,
       sendSearchtermToBackground
     } = getStubbedListeners()
     const store = mockStore(state)
@@ -38,7 +37,6 @@ test('UNIT => listeners => onKeypress => letter => sends search to background', 
     t.ok(findLastSpacePosition.calledWith({}), 'last space position queried')
     t.ok(findSearchterm.calledWith(e.key, {}), 'searchterm found')
     t.ok(dispatchPosition.calledWith(app, {}), 'positioned dispatched')
-    t.ok(dispatchSearchterm.calledWith(app, {}), 'searchterm dispatched')
     t.ok(sendSearchtermToBackground.calledWith(id, {}), 'searchterm send to background')
     t.ok(
       getCurrentCursorPos.calledAfter(getWindowSelection),
@@ -69,10 +67,6 @@ test('UNIT => listeners => onKeypress => letter => sends search to background', 
       'position (cusror offset) dispatched only after offset placed in ctx'
     )
     t.ok(
-      dispatchSearchterm.calledAfter(findSearchterm),
-      'searchterm dispatched only after it was placed in ctx'
-    )
-    t.ok(
       sendSearchtermToBackground.calledAfter(findSearchterm),
       'searchterm dispatched to background only after it was placed in ctx'
     )
@@ -83,7 +77,7 @@ test('UNIT => listeners => onKeypress => letter => sends search to background', 
 })
 
 test('UNIT => listeners => onKeypress => number => sends search to background', t => {
-  t.plan(19)
+  t.plan(17)
   try {
     const state = {
       visibility: 'visible',
@@ -100,7 +94,6 @@ test('UNIT => listeners => onKeypress => number => sends search to background', 
       findSearchterm,
       findLastSpacePosition,
       dispatchPosition,
-      dispatchSearchterm,
       sendSearchtermToBackground
     } = getStubbedListeners()
     const store = mockStore(state)
@@ -117,7 +110,6 @@ test('UNIT => listeners => onKeypress => number => sends search to background', 
     t.ok(findLastSpacePosition.calledWith({}), 'last space position queried')
     t.ok(findSearchterm.calledWith(e.key, {}), 'searchterm found')
     t.ok(dispatchPosition.calledWith(app, {}), 'positioned dispatched')
-    t.ok(dispatchSearchterm.calledWith(app, {}), 'searchterm dispatched')
     t.ok(sendSearchtermToBackground.calledWith(id, {}), 'searchterm send to background')
     t.ok(
       getCurrentCursorPos.calledAfter(getWindowSelection),
@@ -148,10 +140,6 @@ test('UNIT => listeners => onKeypress => number => sends search to background', 
       'position (cusror offset) dispatched only after offset placed in ctx'
     )
     t.ok(
-      dispatchSearchterm.calledAfter(findSearchterm),
-      'searchterm dispatched only after it was placed in ctx'
-    )
-    t.ok(
       sendSearchtermToBackground.calledAfter(findSearchterm),
       'searchterm dispatched to background only after it was placed in ctx'
     )
@@ -162,7 +150,7 @@ test('UNIT => listeners => onKeypress => number => sends search to background', 
 })
 
 test('UNIT => listeners => onKeypress => letter => noop when altKey', t => {
-  t.plan(9)
+  t.plan(8)
   try {
     const state = {
       visibility: 'visible',
@@ -178,7 +166,6 @@ test('UNIT => listeners => onKeypress => letter => noop when altKey', t => {
       getCurrentText,
       findSearchterm,
       dispatchPosition,
-      dispatchSearchterm,
       sendSearchtermToBackground
     } = getStubbedListeners()
     const store = mockStore(state)
@@ -194,7 +181,6 @@ test('UNIT => listeners => onKeypress => letter => noop when altKey', t => {
     t.ok(getCurrentText.notCalled, 'current text not queried')
     t.ok(findSearchterm.notCalled, 'searchterm not found')
     t.ok(dispatchPosition.notCalled, 'positioned not dispatched')
-    t.ok(dispatchSearchterm.notCalled, 'searchterm not dispatched')
     t.ok(sendSearchtermToBackground.notCalled, 'searchterm not send to background')
   } catch (e) {
     t.fail(e)
@@ -203,7 +189,7 @@ test('UNIT => listeners => onKeypress => letter => noop when altKey', t => {
 })
 
 test('UNIT => listeners => onKeypress => letter => noop when ctrlKey', t => {
-  t.plan(9)
+  t.plan(8)
   try {
     const state = {
       visibility: 'visible',
@@ -219,7 +205,6 @@ test('UNIT => listeners => onKeypress => letter => noop when ctrlKey', t => {
       getCurrentText,
       findSearchterm,
       dispatchPosition,
-      dispatchSearchterm,
       sendSearchtermToBackground
     } = getStubbedListeners()
     const store = mockStore(state)
@@ -235,7 +220,6 @@ test('UNIT => listeners => onKeypress => letter => noop when ctrlKey', t => {
     t.ok(getCurrentText.notCalled, 'current text not queried')
     t.ok(findSearchterm.notCalled, 'searchterm not found')
     t.ok(dispatchPosition.notCalled, 'positioned not dispatched')
-    t.ok(dispatchSearchterm.notCalled, 'searchterm not dispatched')
     t.ok(sendSearchtermToBackground.notCalled, 'searchterm not send to background')
   } catch (e) {
     t.fail(e)
@@ -244,7 +228,7 @@ test('UNIT => listeners => onKeypress => letter => noop when ctrlKey', t => {
 })
 
 test('UNIT => listeners => onKeypress => letter => noop when metaKey', t => {
-  t.plan(9)
+  t.plan(8)
   try {
     const state = {
       visibility: 'visible',
@@ -260,7 +244,6 @@ test('UNIT => listeners => onKeypress => letter => noop when metaKey', t => {
       getCurrentText,
       findSearchterm,
       dispatchPosition,
-      dispatchSearchterm,
       sendSearchtermToBackground
     } = getStubbedListeners()
     const store = mockStore(state)
@@ -276,7 +259,6 @@ test('UNIT => listeners => onKeypress => letter => noop when metaKey', t => {
     t.ok(getCurrentText.notCalled, 'current text not queried')
     t.ok(findSearchterm.notCalled, 'searchterm not found')
     t.ok(dispatchPosition.notCalled, 'positioned not dispatched')
-    t.ok(dispatchSearchterm.notCalled, 'searchterm not dispatched')
     t.ok(sendSearchtermToBackground.notCalled, 'searchterm not send to background')
   } catch (e) {
     t.fail(e)

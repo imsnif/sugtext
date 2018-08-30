@@ -421,15 +421,16 @@ test('UNIT => dispatchSearchterm(app, ctx) => ' +
 t => {
   t.plan(1)
   try {
-    const ctx = {searchterm: 'foobar'}
+    const searchterm = 'searchterm'
+    const ctx = {foo: 'bar'}
     const app = 'app'
     const dispatchActionIO = sinon.stub()
-      .withArgs(app, 'search', ctx.searchterm)
+      .withArgs(app, 'search', searchterm)
       .returns(Identity('foo'))
     const { dispatchSearchterm } = getStubbedTransform({
       dispatchActionIO
     })
-    dispatchSearchterm(app)(ctx).map(newCtx => t.equals(
+    dispatchSearchterm(app)(searchterm)(ctx).map(newCtx => t.equals(
       ctx,
       newCtx,
       'ctx returned'

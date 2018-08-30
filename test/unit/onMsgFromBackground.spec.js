@@ -4,21 +4,24 @@ const test = require('tape')
 const { mockStore, getStubbedListeners } = require('../mocks/pipelines')
 
 test('UNIT => listeners => onMsgFromBackground => updates suggestions and shows box', t => {
-  t.plan(2)
+  t.plan(3)
   try {
     const {
       listeners,
-      dispatchAction
+      dispatchAction,
+      dispatchSearchterm
     } = getStubbedListeners()
     const store = mockStore({})
     const app = 'app'
     const id = 'foo'
     const appId = id
     const suggestions = 'suggestions'
+    const searchterm = 'searchterm'
     const { onMsgFromBackground } = listeners(store, app, id)
-    onMsgFromBackground({appId, suggestions})
+    onMsgFromBackground({appId, suggestions, searchterm})
     t.ok(dispatchAction.calledWith(app, 'visibility', 'visible', {}), 'box shown')
     t.ok(dispatchAction.calledWith(app, 'suggest', suggestions, {}), 'suggestions updated')
+    t.ok(dispatchSearchterm.calledWith(app, searchterm, {}), 'searchterm updated')
   } catch (e) {
     t.fail(e)
     t.end()

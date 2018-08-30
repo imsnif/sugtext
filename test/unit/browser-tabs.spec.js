@@ -19,13 +19,14 @@ test(
       const suggestions = ['foo']
       const tabId = 42
       const appId = 47
+      const searchterm = 'searchterm'
       const sendMessage = sinon.stub().returns('foobar')
       stubBrowser({sendMessage})
-      sendToTab(suggestions, tabId, appId)
+      sendToTab(suggestions, tabId, appId, searchterm)
         .fork(t.fail, ret => {
           t.equals(ret, 'foobar', 'result of sendMessage returned')
           t.ok(
-            sendMessage.calledWith(tabId, {appId, suggestions}),
+            sendMessage.calledWith(tabId, {appId, suggestions, searchterm}),
             'proper data sent'
           )
         })

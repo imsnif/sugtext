@@ -43,16 +43,9 @@ test(
       }
       const { populateSuggestions } = getStubbedPopulateSugg({dbs})
       populateSuggestions(ctx).fork(t.fail, suggestions => {
-        t.deepEquals(suggestions,
-          {
-            suggestions: [
-              'foobarbaz2',
-              'foobarbaz1',
-              'foobarbaz',
-              'foobar5',
-              'foobar4'
-            ]
-          },
+        t.deepEquals(
+          suggestions,
+          { suggestions: ['foobarbaz2'] },
           'suggestions properly returned and sorted'
         )
       })
