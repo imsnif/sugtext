@@ -9,7 +9,7 @@ test('UNIT => listeners => onKeypress => letter => sends search to background', 
     const state = {
       visibility: 'visible',
       searchterm: 'searchterm',
-      suggestions: 'suggestions'
+      suggestion: 'suggestion'
     }
     const {
       listeners,
@@ -82,7 +82,7 @@ test('UNIT => listeners => onKeypress => number => sends search to background', 
     const state = {
       visibility: 'visible',
       searchterm: 'searchterm',
-      suggestions: 'suggestions'
+      suggestion: 'suggestion'
     }
     const {
       listeners,
@@ -155,7 +155,7 @@ test('UNIT => listeners => onKeypress => letter => noop when altKey', t => {
     const state = {
       visibility: 'visible',
       searchterm: 'searchterm',
-      suggestions: 'suggestions'
+      suggestion: 'suggestion'
     }
     const {
       listeners,
@@ -194,7 +194,7 @@ test('UNIT => listeners => onKeypress => letter => noop when ctrlKey', t => {
     const state = {
       visibility: 'visible',
       searchterm: 'searchterm',
-      suggestions: 'suggestions'
+      suggestion: 'suggestion'
     }
     const {
       listeners,
@@ -233,7 +233,7 @@ test('UNIT => listeners => onKeypress => letter => noop when metaKey', t => {
     const state = {
       visibility: 'visible',
       searchterm: 'searchterm',
-      suggestions: 'suggestions'
+      suggestion: 'suggestion'
     }
     const {
       listeners,
@@ -272,7 +272,7 @@ test('UNIT => listeners => onKeypress => space => hides box and sends word to ba
     const state = {
       visibility: 'visible',
       searchterm: 'searchterm',
-      suggestions: 'suggestions'
+      suggestion: 'suggestion'
     }
     const {
       listeners,
@@ -327,7 +327,7 @@ test('UNIT => listeners => onKeypress => space => noop if altKey', t => {
     const state = {
       visibility: 'visible',
       searchterm: 'searchterm',
-      suggestions: 'suggestions'
+      suggestion: 'suggestion'
     }
     const {
       listeners,

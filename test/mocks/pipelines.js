@@ -32,14 +32,14 @@ function currySpy (fn) {
 }
 
 module.exports = {
-  mockStore ({visibility, searchterm, suggestions}) {
+  mockStore ({visibility, searchterm, suggestion}) {
     const store = {
       get: sinon.stub(),
       set: sinon.stub()
     }
     store.get.withArgs('visibility').returns(visibility)
     store.get.withArgs('searchterm').returns(searchterm)
-    store.get.withArgs('suggestions').returns(suggestions)
+    store.get.withArgs('suggestion').returns(suggestion)
     return store
   },
   mockEvent ({key, altKey, ctrlKey, metaKey}) {
@@ -90,9 +90,7 @@ module.exports = {
     const formatters = {
       calcBoxHorizontalInverse: currySpy((off, ctx) => ctx),
       calcBoxVerticalInverse: currySpy((off, ctx) => ctx),
-      calcBoxPos: currySpy((off, ctx) => ctx),
-      formatSuggestions: currySpy((suggestions, ctx) => ctx),
-      findNewSelectedSuggestions: currySpy((direction, ctx) => ctx)
+      calcBoxPos: currySpy((off, ctx) => ctx)
     }
     const listeners = {
       onKeyDown: sinon.spy(),
@@ -137,12 +135,12 @@ module.exports = {
         return Future.of(ctx)
       })
     }
-    const findSuggestions = {
-      populateSuggestions: sinon.spy(ctx => Right(ctx))
+    const findSuggestion = {
+      populateSuggestion: sinon.spy(ctx => Right(ctx))
     }
     const browserTabs = {
       populateActiveTab: sinon.spy(ctx => Right(ctx)),
-      sendToTab: sinon.spy((suggestions, tabId, appId) => Future.of({}))
+      sendToTab: sinon.spy((suggestion, tabId, appId) => Future.of({}))
     }
     const updateUserWords = {
       trimNewWord: sinon.spy(ctx => ctx),
@@ -153,14 +151,14 @@ module.exports = {
       './features/init-dbs': {initDbs},
       '../common-words.json': commonEnglishWords,
       './pipeline/transforms': transforms,
-      './features/find-suggestions': findSuggestions,
+      './features/find-suggestion': findSuggestion,
       './features/browser-tabs': browserTabs,
       './features/update-user-words': updateUserWords
     })
     return mergeAll([
       {background: {sendMessage: msg => emitter.emit('msg', msg)}},
       transforms,
-      findSuggestions,
+      findSuggestion,
       browserTabs,
       updateUserWords
     ])

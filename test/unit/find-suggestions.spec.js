@@ -3,7 +3,7 @@ const sinon = require('sinon')
 const proxyquire = require('proxyquire').noCallThru()
 
 function getStubbedPopulateSugg ({dbs}) {
-  return proxyquire('../../js/features/find-suggestions', {
+  return proxyquire('../../js/features/find-suggestion', {
     '../dbs/common': dbs.common,
     '../dbs/user': dbs.user
   })
@@ -29,7 +29,7 @@ const userWordResults = {
 }
 
 test(
-  'UNIT => populateSuggestions(ctx) => returns and formats suggestions', t => {
+  'UNIT => populateSuggestion(ctx) => returns and formats suggestion', t => {
     t.plan(1)
     try {
       const ctx = {searchterm: 'foo'}
@@ -41,12 +41,12 @@ test(
           allDocs: sinon.stub().returns(Promise.resolve(userWordResults))
         }
       }
-      const { populateSuggestions } = getStubbedPopulateSugg({dbs})
-      populateSuggestions(ctx).fork(t.fail, suggestions => {
+      const { populateSuggestion } = getStubbedPopulateSugg({dbs})
+      populateSuggestion(ctx).fork(t.fail, suggestion => {
         t.deepEquals(
-          suggestions,
-          { suggestions: ['foobarbaz2'] },
-          'suggestions properly returned and sorted'
+          suggestion,
+          { suggestion: 'foobarbaz2' },
+          'suggestion properly returned and sorted'
         )
       })
     } catch (e) {

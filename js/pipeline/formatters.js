@@ -1,8 +1,6 @@
 const {
   curry,
   merge,
-  prop,
-  findIndex,
   last,
   split,
   slice,
@@ -12,46 +10,12 @@ const {
 
 const R = require('ramda')
 
-const {
-  extractChosenWord
-} = require('./text-manipulation')
-
 module.exports = {
   findTextToInsert: ctx => {
-    const chosenWord = extractChosenWord(ctx.suggestions)
-    const { searchterm } = ctx
+    const { suggestion, searchterm } = ctx
     const re = new RegExp('^' + searchterm)
-    return merge(ctx, {textToInsert: chosenWord.replace(re, '')})
+    return merge(ctx, {textToInsert: suggestion.replace(re, '')})
   },
-  formatSuggestions: curry((suggestions, ctx) => {
-    const mapIndex = R.addIndex(R.map)
-    const padSuggestions = suggestions => R.insertAll(
-      0,
-      R.repeat({}, 5 - suggestions.length),
-      suggestions
-    )
-    const orderedSuggestions = ctx.inverseSelection
-      ? R.compose(
-        padSuggestions,
-        mapIndex((word, i) => ({word, selected: i === suggestions.length - 1})),
-        R.reverse
-      )(suggestions)
-      : suggestions.map((word, i) => ({word, selected: i === 0}))
-    return merge(ctx, {orderedSuggestions})
-  }),
-  findNewSelectedSuggestions: curry((direction, ctx) => {
-    const currentSelected = findIndex(prop('selected'), ctx.suggestions)
-    const nonPaddedSuggestions = ctx.suggestions.filter(sug => sug.word)
-    const highestIndex = ctx.suggestions.length - 1
-    const lowestIndex = highestIndex - (nonPaddedSuggestions.length - 1)
-    const selectedIndex = direction === 'ArrowUp'
-      ? (currentSelected > lowestIndex ? currentSelected - 1 : highestIndex)
-      : (currentSelected < highestIndex ? currentSelected + 1 : lowestIndex)
-    const selectedSuggestions = ctx.suggestions.map(({word}, i) => {
-      return {word, selected: i === selectedIndex}
-    })
-    return merge(ctx, {selectedSuggestions})
-  }),
   calcBoxHorizontalInverse: curry((off, ctx) => {
     const { clientSize, appSize } = ctx
     const { left } = off

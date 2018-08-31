@@ -1,21 +1,10 @@
 const test = require('tape')
-const sinon = require('sinon')
-const proxyquire = require('proxyquire')
-
-function getStubbedFormatters ({extractChosenWord = sinon.stub()}) {
-  return proxyquire('../../js/pipeline/formatters', {
-    './text-manipulation': {extractChosenWord}
-  })
-}
 
 test('UNIT => findTextToInsert(ctx) => formats text in ctx', t => {
   t.plan(1)
   try {
-    const ctx = {searchterm: 'foo', suggestions: 'foobar'}
-    const extractChosenWord = sinon.stub()
-      .withArgs(ctx.suggestions)
-      .returns('foobar')
-    const { findTextToInsert } = getStubbedFormatters({extractChosenWord})
+    const ctx = {searchterm: 'foo', suggestion: 'foobar'}
+    const { findTextToInsert } = require('../../js/pipeline/formatters')
     t.deepEquals(findTextToInsert(ctx), Object.assign({}, ctx, {
       textToInsert: 'bar'
     }), 'textToInsert properly formatted in ctx')
@@ -25,171 +14,6 @@ test('UNIT => findTextToInsert(ctx) => formats text in ctx', t => {
     t.end()
   }
 })
-
-test(
-  'UNIT => formatSuggestions(suggestions, ctx) => orders suggestions in ctx',
-  t => {
-    t.plan(1)
-    try {
-      const suggestions = ['one', 'two', 'three', 'four', 'five']
-      const ctx = {inverseSelection: false}
-      const { formatSuggestions } = getStubbedFormatters({})
-      t.deepEquals(formatSuggestions(suggestions)(ctx), Object.assign({}, ctx, {
-        orderedSuggestions: suggestions
-          .map((word, i) => ({word, selected: i === 0}))
-      }), 'suggestions ordered in ctx')
-    } catch (e) {
-      console.error(e.stack)
-      t.fail(e)
-      t.end()
-    }
-  }
-)
-
-test(
-  'UNIT => formatSuggestions(suggestions, ctx) => inverses suggestions in ctx',
-  t => {
-    t.plan(1)
-    try {
-      const suggestions = ['one', 'two', 'three', 'four', 'five']
-      const ctx = {inverseSelection: true}
-      const { formatSuggestions } = getStubbedFormatters({})
-      t.deepEquals(formatSuggestions(suggestions)(ctx), Object.assign({}, ctx, {
-        orderedSuggestions: suggestions
-          .reverse()
-          .map((word, i) => ({word, selected: i === suggestions.length - 1}))
-      }), 'suggestions inversely ordered in ctx')
-    } catch (e) {
-      console.error(e.stack)
-      t.fail(e)
-      t.end()
-    }
-  }
-)
-
-test(
-  'UNIT => findNewSelectedSuggestions(direction, ctx) => ' +
-  'moves up selected in ctx',
-  t => {
-    t.plan(1)
-    try {
-      const suggestions = [
-        {word: 'one', selected: false},
-        {word: 'two', selected: true},
-        {word: 'three', selected: false},
-        {word: 'four', selected: false},
-        {word: 'five', selected: false}
-      ]
-      const ctx = {suggestions}
-      const { findNewSelectedSuggestions } = getStubbedFormatters({})
-      t.deepEquals(findNewSelectedSuggestions('ArrowUp')(ctx),
-        Object.assign({},
-          ctx, {
-            selectedSuggestions: suggestions.map((entry, i) => ({
-              word: entry.word,
-              selected: i === 0
-            }))
-          }
-        ),
-        'selection moved in suggestions in ctx'
-      )
-    } catch (e) {
-      console.error(e.stack)
-      t.fail(e)
-      t.end()
-    }
-  }
-)
-
-test(
-  'UNIT => findNewSelectedSuggestions(direction, ctx) => ' +
-  'moves down selected in ctx',
-  t => {
-    t.plan(1)
-    try {
-      const suggestions = [
-        {word: 'one', selected: false},
-        {word: 'two', selected: true},
-        {word: 'three', selected: false},
-        {word: 'four', selected: false},
-        {word: 'five', selected: false}
-      ]
-      const ctx = {suggestions}
-      const { findNewSelectedSuggestions } = getStubbedFormatters({})
-      t.deepEquals(findNewSelectedSuggestions('ArrowDown')(ctx),
-        Object.assign({}, ctx, {
-          selectedSuggestions: suggestions
-            .map((entry, i) => ({word: entry.word, selected: i === 2}))
-        }),
-        'selection moved in suggestions in ctx'
-      )
-    } catch (e) {
-      console.error(e.stack)
-      t.fail(e)
-      t.end()
-    }
-  }
-)
-
-test(
-  'UNIT => findNewSelectedSuggestions(direction, ctx) => ' +
-  'moves up selected in ctx (loops down if at first suggestions)',
-  t => {
-    t.plan(1)
-    try {
-      const suggestions = [
-        {word: 'one', selected: true},
-        {word: 'two', selected: false},
-        {word: 'three', selected: false},
-        {word: 'four', selected: false},
-        {word: 'five', selected: false}
-      ]
-      const ctx = {suggestions}
-      const { findNewSelectedSuggestions } = getStubbedFormatters({})
-      t.deepEquals(findNewSelectedSuggestions('ArrowUp')(ctx),
-        Object.assign({}, ctx, {
-          selectedSuggestions: suggestions
-            .map((entry, i) => ({word: entry.word, selected: i === 4}))
-        }),
-        'selection moved in suggestions in ctx'
-      )
-    } catch (e) {
-      console.error(e.stack)
-      t.fail(e)
-      t.end()
-    }
-  }
-)
-
-test(
-  'UNIT => findNewSelectedSuggestions(direction, ctx) => ' +
-  'moves down selected in ctx (loops up if at last suggestions)',
-  t => {
-    t.plan(1)
-    try {
-      const suggestions = [
-        {word: 'one', selected: false},
-        {word: 'two', selected: false},
-        {word: 'three', selected: false},
-        {word: 'four', selected: false},
-        {word: 'five', selected: true}
-      ]
-      const ctx = {suggestions}
-      const { findNewSelectedSuggestions } = getStubbedFormatters({})
-      t.deepEquals(findNewSelectedSuggestions('ArrowDown')(ctx),
-        Object.assign({}, ctx, {
-          selectedSuggestions: suggestions
-            .map((entry, i) => ({word: entry.word, selected: i === 0}))
-        }),
-        'selection moved in suggestions in ctx'
-      )
-    } catch (e) {
-      console.error(e.stack)
-      t.fail(e)
-      t.end()
-    }
-  }
-)
 
 test(
   'UNIT => calcBoxHorizontalInverse(off, ctx) => ' +
@@ -207,7 +31,7 @@ test(
         left: 100
       }
       const ctx = {clientSize, appSize}
-      const { calcBoxHorizontalInverse } = getStubbedFormatters({})
+      const { calcBoxHorizontalInverse } = require('../../js/pipeline/formatters')
       t.deepEquals(calcBoxHorizontalInverse(off)(ctx),
         Object.assign({}, ctx, {inverseHorizontal: true}),
         'inverseHorizontal set to true in ctx'
@@ -236,7 +60,7 @@ test(
         left: 100
       }
       const ctx = {clientSize, appSize}
-      const { calcBoxHorizontalInverse } = getStubbedFormatters({})
+      const { calcBoxHorizontalInverse } = require('../../js/pipeline/formatters')
       t.deepEquals(calcBoxHorizontalInverse(off)(ctx),
         Object.assign({}, ctx, {inverseHorizontal: false}),
         'inverseHorizontal set to false in ctx'
@@ -266,7 +90,7 @@ test(
         height: 10
       }
       const ctx = {clientSize, appSize}
-      const { calcBoxVerticalInverse } = getStubbedFormatters({})
+      const { calcBoxVerticalInverse } = require('../../js/pipeline/formatters')
       t.deepEquals(calcBoxVerticalInverse(off)(ctx),
         Object.assign({}, ctx, {inverseVertical: true}),
         'inverseVertical set to true in ctx'
@@ -296,7 +120,7 @@ test(
         height: 9
       }
       const ctx = {clientSize, appSize}
-      const { calcBoxVerticalInverse } = getStubbedFormatters({})
+      const { calcBoxVerticalInverse } = require('../../js/pipeline/formatters')
       t.deepEquals(calcBoxVerticalInverse(off)(ctx),
         Object.assign({}, ctx, {inverseVertical: false}),
         'inverseVertical set to false in ctx'
@@ -330,7 +154,7 @@ test(
         left: 10
       }
       const ctx = {clientSize, appSize, inverseHorizontal, inverseVertical}
-      const { calcBoxPos } = getStubbedFormatters({})
+      const { calcBoxPos } = require('../../js/pipeline/formatters')
       t.deepEquals(calcBoxPos(off)(ctx),
         Object.assign({}, ctx, {boxPos: {
           left: off.left,
@@ -367,7 +191,7 @@ test(
         left: 10
       }
       const ctx = {clientSize, appSize, inverseHorizontal, inverseVertical}
-      const { calcBoxPos } = getStubbedFormatters({})
+      const { calcBoxPos } = require('../../js/pipeline/formatters')
       t.deepEquals(calcBoxPos(off)(ctx),
         Object.assign({}, ctx, {boxPos: {
           left: clientSize.clientWidth - appSize.width,
@@ -392,7 +216,7 @@ test(
       const textToInsert = 'foo'
       const initCurPos = {start: 3, end: 3}
       const ctx = {textToInsert, initCurPos}
-      const { findNewCursorPos } = getStubbedFormatters({})
+      const { findNewCursorPos } = require('../../js/pipeline/formatters')
       t.deepEquals(findNewCursorPos(ctx),
         Object.assign({}, ctx, {pos: 6}),
         'pos set properly in ctx'
@@ -414,7 +238,7 @@ test(
       const textToInsert = ''
       const initCurPos = {start: 3, end: 3}
       const ctx = {textToInsert, initCurPos}
-      const { findNewCursorPos } = getStubbedFormatters({})
+      const { findNewCursorPos } = require('../../js/pipeline/formatters')
       t.deepEquals(findNewCursorPos(ctx),
         Object.assign({}, ctx, {pos: 4}),
         'pos set properly in ctx'
@@ -437,7 +261,7 @@ test(
       const lastChar = 'o'
       const initCurPos = {start: 6, end: 6}
       const ctx = {initText, initCurPos}
-      const { findSearchterm } = getStubbedFormatters({})
+      const { findSearchterm } = require('../../js/pipeline/formatters')
       t.deepEquals(findSearchterm(lastChar)(ctx),
         Object.assign({}, ctx, {searchterm: 'foo'}),
         'searchterm set properly in ctx'
@@ -459,7 +283,7 @@ test(
       const initText = 'bar fo bar'
       const initCurPos = {start: 10, end: 10}
       const ctx = {initText, initCurPos}
-      const { findLastSpacePosition } = getStubbedFormatters({})
+      const { findLastSpacePosition } = require('../../js/pipeline/formatters')
       t.deepEquals(findLastSpacePosition(ctx),
         Object.assign({}, ctx, {spacePosition: 7}),
         'spacePosition set properly in ctx'

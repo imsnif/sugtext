@@ -9,7 +9,7 @@ test('UNIT => listeners => onKeyDown => Tab => completes word', t => {
     const state = {
       visibility: 'visible',
       searchterm: 'searchterm',
-      suggestions: 'suggestions'
+      suggestion: 'suggestion'
     }
     const {
       listeners,
@@ -27,21 +27,21 @@ test('UNIT => listeners => onKeyDown => Tab => completes word', t => {
     onKeyDown(e)
     t.ok(
       findTextToInsert.calledWith(
-        {searchterm: state.searchterm, suggestions: state.suggestions}
+        {searchterm: state.searchterm, suggestion: state.suggestion}
       ),
       'text formatted properly'
     )
     t.ok(
       updateTextNode.calledWith(
         e.target,
-        {searchterm: state.searchterm, suggestions: state.suggestions}
+        {searchterm: state.searchterm, suggestion: state.suggestion}
       ),
       'text node updated properly'
     )
     t.ok(
       focusEventTarget.calledWith(
         e,
-        {searchterm: state.searchterm, suggestions: state.suggestions}
+        {searchterm: state.searchterm, suggestion: state.suggestion}
       ),
       'event target focused'
     )
@@ -50,14 +50,14 @@ test('UNIT => listeners => onKeyDown => Tab => completes word', t => {
         app,
         'visibility',
         'hidden',
-        {searchterm: state.searchterm, suggestions: state.suggestions}
+        {searchterm: state.searchterm, suggestion: state.suggestion}
       ),
       'box hidden'
     )
     t.ok(
       sendAcceptedToBackground.calledWith(
         id,
-        {searchterm: state.searchterm, suggestions: state.suggestions}
+        {searchterm: state.searchterm, suggestion: state.suggestion}
       ),
       'nothing sent to background'
     )
@@ -75,7 +75,7 @@ test('UNIT => listeners => onKeyDown => Tab => noop when store is not visible', 
     const state = {
       visibility: 'hidden',
       searchterm: 'searchterm',
-      suggestions: 'suggestions'
+      suggestion: 'suggestion'
     }
     const {
       listeners,
@@ -96,87 +96,6 @@ test('UNIT => listeners => onKeyDown => Tab => noop when store is not visible', 
     t.ok(focusEventTarget.notCalled, 'event target not focused')
     t.ok(dispatchAction.notCalled, 'box not hidden')
     t.ok(sendAcceptedToBackground.notCalled, 'accepted not sent to background')
-  } catch (e) {
-    t.fail(e)
-    t.end()
-  }
-})
-
-test('UNIT => listeners => onKeyDown => ArrowDown => moves one suggestion down', t => {
-  t.plan(2)
-  try {
-    const state = {
-      visibility: 'visible'
-    }
-    const {
-      listeners,
-      focusEventTarget,
-      dispatchAction
-    } = getStubbedListeners()
-    const store = mockStore(state)
-    const app = 'app'
-    const e = mockEvent({key: 'ArrowDown'})
-    const id = 'foo'
-    const { onKeyDown } = listeners(store, app, id)
-    onKeyDown(e)
-    t.ok(focusEventTarget.calledWith(e, {}), 'event target focused')
-    t.ok(
-      dispatchAction.calledWith(app, 'moveSelection', e.key, {}),
-      'selection moved down'
-    )
-  } catch (e) {
-    t.fail(e)
-    t.end()
-  }
-})
-
-test('UNIT => listeners => onKeyDown => ArrowUp => moves one suggestion up', t => {
-  t.plan(2)
-  try {
-    const state = {
-      visibility: 'visible'
-    }
-    const {
-      listeners,
-      focusEventTarget,
-      dispatchAction
-    } = getStubbedListeners()
-    const store = mockStore(state)
-    const app = 'app'
-    const e = mockEvent({key: 'ArrowUp'})
-    const id = 'foo'
-    const { onKeyDown } = listeners(store, app, id)
-    onKeyDown(e)
-    t.ok(focusEventTarget.calledWith(e, {}), 'event target focused')
-    t.ok(
-      dispatchAction.calledWith(app, 'moveSelection', e.key, {}),
-      'selection moved up'
-    )
-  } catch (e) {
-    t.fail(e)
-    t.end()
-  }
-})
-
-test('UNIT => listeners => onKeyDown => ArrowUp/ArrowDown => noop if store is hidden', t => {
-  t.plan(2)
-  try {
-    const state = {
-      visibility: 'hidden'
-    }
-    const {
-      listeners,
-      focusEventTarget,
-      dispatchAction
-    } = getStubbedListeners()
-    const store = mockStore(state)
-    const app = 'app'
-    const e = mockEvent({key: 'ArrowUp'})
-    const id = 'foo'
-    const { onKeyDown } = listeners(store, app, id)
-    onKeyDown(e)
-    t.ok(focusEventTarget.notCalled, 'event target not focused')
-    t.ok(dispatchAction.notCalled, 'selection not moved')
   } catch (e) {
     t.fail(e)
     t.end()

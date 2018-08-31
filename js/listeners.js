@@ -29,25 +29,19 @@ module.exports = (store, app, id) => {
   const getFromStore = getStoreKeyValue(store)
   const hideBox = dispatchAction(app, 'visibility', 'hidden')
   const showBox = dispatchAction(app, 'visibility', 'visible')
-  const updateSuggestions = dispatchAction(app, 'suggest')
-  const moveSelection = dispatchAction(app, 'moveSelection')
+  const updateSuggestion = dispatchAction(app, 'suggest')
   return {
     onKeyDown (e) {
       if (store.get('visibility') !== 'visible') return
       if (e.key === 'Tab') {
         initCtx({})
           .chain(getFromStore('searchterm'))
-          .chain(getFromStore('suggestions'))
+          .chain(getFromStore('suggestion'))
           .map(findTextToInsert)
           .chain(updateTextNode(e.target))
           .chain(focusEventTarget(e))
           .chain(hideBox)
           .chain(sendAcceptedToBackground(id))
-          .cata(console.error, noop)
-      } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-        initCtx({})
-          .chain(focusEventTarget(e))
-          .chain(moveSelection(e.key))
           .cata(console.error, noop)
       } else {
         initCtx({})
@@ -90,11 +84,11 @@ module.exports = (store, app, id) => {
           .cata(console.error, noop)
       }
     },
-    onMsgFromBackground ({appId, suggestions, searchterm}) {
+    onMsgFromBackground ({appId, suggestion, searchterm}) {
       if (appId === id) {
         initCtx({})
           .chain(showBox)
-          .chain(updateSuggestions(suggestions))
+          .chain(updateSuggestion(suggestion))
           .chain(dispatchSearchterm(app, searchterm))
           .cata(console.error, noop)
       } else {

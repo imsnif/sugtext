@@ -16,8 +16,8 @@ const buildQuery = searchterm => ({
 })
 
 const formatResults = searchterm => R.compose(
-  R.map(R.prop('id')),
-  R.slice(0, 1),
+  R.prop('id'),
+  R.head,
   R.reverse,
   R.sortBy(R.path(['doc', 'score'])),
   R.prop('rows')
@@ -30,12 +30,12 @@ const queryForWords = (db, searchterm) => {
 }
 
 module.exports = {
-  populateSuggestions (ctx) {
+  populateSuggestion (ctx) {
     return Future.parallel(
       dbPriority.length,
       dbPriority.map(db => queryForWords(db, ctx.searchterm))
     )
-      .map(R.compose(R.slice(0, 1), R.uniq, R.flatten))
-      .map(R.objOf('suggestions'))
+      .map(R.compose(R.head, R.reject(R.isNil)))
+      .map(R.objOf('suggestion'))
   }
 }

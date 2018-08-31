@@ -27,7 +27,7 @@ test('UNIT => background => msg => searchterm: proper pipeline', t => {
     const {
       background,
       maybePropToCtx,
-      populateSuggestions,
+      populateSuggestion,
       populateActiveTab,
       sendToTab
     } = stubBackground({})
@@ -41,8 +41,8 @@ test('UNIT => background => msg => searchterm: proper pipeline', t => {
       'maybePropToCtx called with searchterm, msg and ctx'
     )
     t.ok(
-      populateSuggestions.calledWith({}),
-      'populateSuggestions called with ctx'
+      populateSuggestion.calledWith({}),
+      'populateSuggestion called with ctx'
     )
     t.ok(
       populateActiveTab.calledWith({}),
@@ -53,16 +53,16 @@ test('UNIT => background => msg => searchterm: proper pipeline', t => {
       'populateActiveTab called with ctx'
     )
     t.ok(
-      populateSuggestions.calledAfter(maybePropToCtx),
-      'populateSuggestions called after props verified and placed in ctx'
+      populateSuggestion.calledAfter(maybePropToCtx),
+      'populateSuggestion called after props verified and placed in ctx'
     )
     t.ok(
       populateActiveTab.calledAfter(maybePropToCtx),
       'populateActiveTab called after props verified and placed in ctx'
     )
     t.ok(
-      sendToTab.calledAfter(populateSuggestions),
-      'sendToTab called after suggestions were found and placed in ctx'
+      sendToTab.calledAfter(populateSuggestion),
+      'sendToTab called after suggestion were found and placed in ctx'
     )
     t.ok(
       sendToTab.calledAfter(populateActiveTab),

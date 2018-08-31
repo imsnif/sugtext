@@ -5,7 +5,7 @@
 const { Identity } = require('monet')
 
 const { maybePropToCtx, readParallelToCtx } = require('./pipeline/transforms')
-const { populateSuggestions } = require('./features/find-suggestions')
+const { populateSuggestion } = require('./features/find-suggestion')
 const { populateActiveTab, sendToTab } = require('./features/browser-tabs')
 const {
   trimNewWord,
@@ -24,11 +24,11 @@ browser.runtime.onMessage.addListener(msg => {
     .chain(maybePropToCtx('appId', msg))
     .chain(maybePropToCtx('searchterm', msg))
     .chain(readParallelToCtx([
-      populateSuggestions,
+      populateSuggestion,
       populateActiveTab
     ]))
     .chain(ctx => sendToTab(
-      ctx.suggestions,
+      ctx.suggestion,
       ctx.tabId,
       ctx.appId,
       ctx.searchterm

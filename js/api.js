@@ -8,15 +8,12 @@ const Store = require('@redom/store')
 const { observeBackground } = require('./util/msg-bus')
 
 const {
-  getStoreKeyValue,
   getClientSize,
   updateState,
   updateStateFromCtx,
   getAppSize
 } = require('./pipeline/transforms')
 const {
-  formatSuggestions,
-  findNewSelectedSuggestions,
   calcBoxHorizontalInverse,
   calcBoxVerticalInverse,
   calcBoxPos
@@ -30,7 +27,6 @@ module.exports = (app) => {
   const id = uuid()
   const updateAppState = updateState(store, app)
   const updateAppStateFromCtx = updateStateFromCtx(store, app)
-  const getFromStore = getStoreKeyValue(store)
   const {
     onKeyDown,
     onBlur,
@@ -51,7 +47,6 @@ module.exports = (app) => {
         .map(calcBoxVerticalInverse(off))
         .map(calcBoxPos(off))
         .chain(updateAppStateFromCtx('boxPos', 'position'))
-        .chain(updateAppStateFromCtx('inverseVertical', 'inverseSelection'))
         .cata(console.error, noop)
     },
     visibility (val) {
@@ -59,18 +54,9 @@ module.exports = (app) => {
         .chain(updateAppState('visibility', val))
         .cata(console.error, noop)
     },
-    suggest (suggestions) {
+    suggest (suggestion) {
       initCtx({})
-        .chain(getFromStore('inverseSelection'))
-        .map(formatSuggestions(suggestions))
-        .chain(updateAppStateFromCtx('orderedSuggestions', 'suggestions'))
-        .cata(console.error, noop)
-    },
-    moveSelection (direction) {
-      initCtx({})
-        .chain(getFromStore('suggestions'))
-        .map(findNewSelectedSuggestions(direction))
-        .chain(updateAppStateFromCtx('selectedSuggestions', 'suggestions'))
+        .chain(updateAppState('suggestion', suggestion))
         .cata(console.error, noop)
     }
   })

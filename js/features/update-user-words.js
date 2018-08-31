@@ -19,6 +19,7 @@ module.exports = {
       )
   },
   writeWordToUserDb (wordEntry) {
+    if (wordEntry._id.length === 0) return Future.of({})
     return Future.tryP(() => userWordsDb.put(wordEntry))
   }
 }

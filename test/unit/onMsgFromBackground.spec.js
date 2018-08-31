@@ -3,7 +3,7 @@
 const test = require('tape')
 const { mockStore, getStubbedListeners } = require('../mocks/pipelines')
 
-test('UNIT => listeners => onMsgFromBackground => updates suggestions and shows box', t => {
+test('UNIT => listeners => onMsgFromBackground => updates suggestion and shows box', t => {
   t.plan(3)
   try {
     const {
@@ -15,12 +15,12 @@ test('UNIT => listeners => onMsgFromBackground => updates suggestions and shows 
     const app = 'app'
     const id = 'foo'
     const appId = id
-    const suggestions = 'suggestions'
+    const suggestion = 'suggestion'
     const searchterm = 'searchterm'
     const { onMsgFromBackground } = listeners(store, app, id)
-    onMsgFromBackground({appId, suggestions, searchterm})
+    onMsgFromBackground({appId, suggestion, searchterm})
     t.ok(dispatchAction.calledWith(app, 'visibility', 'visible', {}), 'box shown')
-    t.ok(dispatchAction.calledWith(app, 'suggest', suggestions, {}), 'suggestions updated')
+    t.ok(dispatchAction.calledWith(app, 'suggest', suggestion, {}), 'suggestion updated')
     t.ok(dispatchSearchterm.calledWith(app, searchterm, {}), 'searchterm updated')
   } catch (e) {
     t.fail(e)
@@ -29,7 +29,7 @@ test('UNIT => listeners => onMsgFromBackground => updates suggestions and shows 
 })
 
 test(
-  'UNIT => listeners => onMsgFromBackground => suggestions hidden when not my id',
+  'UNIT => listeners => onMsgFromBackground => suggestion hidden when not my id',
   t => {
     t.plan(1)
     try {
@@ -41,9 +41,9 @@ test(
       const app = 'app'
       const id = 'foo'
       const appId = 'not foo'
-      const suggestions = 'suggestions'
+      const suggestion = 'suggestion'
       const { onMsgFromBackground } = listeners(store, app, id)
-      onMsgFromBackground({appId, suggestions})
+      onMsgFromBackground({appId, suggestion})
       t.ok(
         dispatchAction.calledWith(app, 'visibility', 'hidden'),
         'box hidden'

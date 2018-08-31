@@ -26,7 +26,7 @@ test('UNIT => api => search => updates app state with searchterm', t => {
 })
 
 test('UNIT => api => position => updates app state properly', t => {
-  t.plan(15)
+  t.plan(14)
   try {
     const state = {}
     const off = 'foo'
@@ -61,16 +61,6 @@ test('UNIT => api => position => updates app state properly', t => {
     t.ok(
       updateStateFromCtx.calledWith(store, app, 'boxPos', 'position', {}),
       'box position updated in state'
-    )
-    t.ok(
-      updateStateFromCtx.calledWith(
-        store,
-        app,
-        'inverseVertical',
-        'inverseSelection',
-        {}
-      ),
-      'inverseVertical updated in state'
     )
     t.ok(
       calcBoxHorizontalInverse.calledAfter(getClientSize),
@@ -137,79 +127,21 @@ test('UNIT => api => visibility => updates app state with visibility', t => {
   }
 })
 
-test('UNIT => api => suggest => updates app state with formatted suggestions', t => {
-  t.plan(5)
+test('UNIT => api => suggest => updates app state with suggestion', t => {
+  t.plan(1)
   try {
     const state = {}
-    const suggestions = 'foo'
+    const suggestion = 'foo'
     const app = 'bar'
     const store = mockStore(state)
     const {
       suggest,
-      getStoreKeyValue,
-      formatSuggestions,
-      updateStateFromCtx
+      updateState
     } = stubApi({app, store})
-    suggest(suggestions)
+    suggest(suggestion)
     t.ok(
-      getStoreKeyValue.calledWith(store, 'inverseSelection', {}),
-      'inverseSelection taken from store'
-    )
-    t.ok(
-      formatSuggestions.calledWith(suggestions, {inverseSelection: undefined}),
-      'suggestions properly formatted'
-    )
-    t.ok(
-      updateStateFromCtx.calledWith(store, app, 'orderedSuggestions', 'suggestions'),
-      'searchterm updated in state'
-    )
-    t.ok(
-      updateStateFromCtx.calledAfter(formatSuggestions),
-      'state updated after suggestions were formatted'
-    )
-    t.ok(
-      formatSuggestions.calledAfter(getStoreKeyValue),
-      'suggestions formatted after inverseSelection was placed in ctx'
-    )
-  } catch (e) {
-    t.fail(e)
-    t.end()
-  }
-})
-
-test('UNIT => api => moveSelection => updates app state with new selected suggestions', t => {
-  t.plan(5)
-  try {
-    const state = {}
-    const direction = 'foo'
-    const app = 'bar'
-    const store = mockStore(state)
-    const {
-      moveSelection,
-      getStoreKeyValue,
-      findNewSelectedSuggestions,
-      updateStateFromCtx
-    } = stubApi({app, store})
-    moveSelection(direction)
-    t.ok(
-      getStoreKeyValue.calledWith(store, 'suggestions', {}),
-      'suggestions taken from store'
-    )
-    t.ok(
-      findNewSelectedSuggestions.calledWith(direction, {suggestions: undefined}),
-      'new selected suggestion found'
-    )
-    t.ok(
-      updateStateFromCtx.calledWith(store, app, 'selectedSuggestions', 'suggestions'),
-      'selectedSuggestions updated in state'
-    )
-    t.ok(
-      updateStateFromCtx.calledAfter(findNewSelectedSuggestions),
-      'state updated after new selected suggestions was found'
-    )
-    t.ok(
-      findNewSelectedSuggestions.calledAfter(getStoreKeyValue),
-      'new suggestion found after suggestions were placed in ctx'
+      updateState.calledWith(store, app, 'suggestion', suggestion, {}),
+      'state updated with suggestion'
     )
   } catch (e) {
     t.fail(e)

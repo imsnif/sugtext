@@ -201,7 +201,7 @@ test('contentEditable - suggestion box respects horizontal screen border', async
   }
 })
 
-test('contentEditable - suggestion box respects vertical screen border (with inverse selection)', async t => {
+test('contentEditable - suggestion box respects vertical screen border', async t => {
   t.plan(1)
   try {
     const { browser, contentPage } = await loadExtension('one-contenteditable-field')
@@ -220,36 +220,6 @@ test('contentEditable - suggestion box respects vertical screen border (with inv
     t.fail(e.message)
   }
 })
-
-test(
-  'contentEditable - suggestion box respects vertical screen border ' +
-  '(with inverse selection and less than 5 suggestions)',
-  async t => {
-    t.plan(1)
-    try {
-      const {
-        browser,
-        contentPage
-      } = await loadExtension('one-contenteditable-field')
-      await contentPage.setViewport({width: 200, height: 200})
-      const textboxEl = await contentPage.$('#completeme')
-      for (let i = 0; i < 5; i++) {
-        await textboxEl.press('Enter')
-      }
-      await textboxEl.type('thial', {delay: 100})
-      const captured = await contentPage.screenshot()
-      const truth = fs.readFileSync(
-        screenshotDir +
-        '/contenteditable-suggest-overflow-vertical-few-selections.png'
-      )
-      const matchesScreenshot = await looksSame(truth, captured)
-      t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-      await browser.close()
-    } catch (e) {
-      t.fail(e.message)
-    }
-  }
-)
 
 test('contentEditable - suggest completions when scrolled down', async t => {
   t.plan(1)

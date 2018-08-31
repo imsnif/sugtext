@@ -13,20 +13,20 @@ function stubBrowser ({sendMessage, query}) {
 }
 
 test(
-  'UNIT => sendToTab(suggestions, tabId, appId) => sends message to tab', t => {
+  'UNIT => sendToTab(suggestion, tabId, appId, searchterm) => sends message to tab', t => {
     t.plan(2)
     try {
-      const suggestions = ['foo']
+      const suggestion = ['foo']
       const tabId = 42
       const appId = 47
       const searchterm = 'searchterm'
       const sendMessage = sinon.stub().returns('foobar')
       stubBrowser({sendMessage})
-      sendToTab(suggestions, tabId, appId, searchterm)
+      sendToTab(suggestion, tabId, appId, searchterm)
         .fork(t.fail, ret => {
           t.equals(ret, 'foobar', 'result of sendMessage returned')
           t.ok(
-            sendMessage.calledWith(tabId, {appId, suggestions, searchterm}),
+            sendMessage.calledWith(tabId, {appId, suggestion, searchterm}),
             'proper data sent'
           )
         })
@@ -39,15 +39,15 @@ test(
 )
 
 test(
-  'UNIT => sendToTab(suggestions, tabId, appId) => noop no suggestions', t => {
+  'UNIT => sendToTab(suggestion, tabId, appId) => noop on no suggestion', t => {
     t.plan(2)
     try {
-      const suggestions = []
+      const suggestion = null
       const tabId = 42
       const appId = 47
       const sendMessage = sinon.stub().returns('foobar')
       stubBrowser({sendMessage})
-      sendToTab(suggestions, tabId, appId)
+      sendToTab(suggestion, tabId, appId)
         .fork(t.fail, ret => {
           t.equals(ret, undefined, 'returned undefined')
           t.ok(sendMessage.notCalled, 'no message sent')

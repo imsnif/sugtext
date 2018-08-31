@@ -34,11 +34,11 @@ module.exports = class App {
     this.el.style.display = visibility === 'hidden' ? 'none' : 'initial'
   }
   update (data) {
-    const { suggestions, position, visibility, searchterm } = data
-    if (suggestions) {
+    const { suggestion, position, visibility, searchterm } = data
+    if (suggestion) {
       const re = new RegExp(`^${searchterm}`)
       this.searchterm.update(searchterm)
-      this.completion.update(suggestions[0].word.replace(re, ''))
+      this.completion.update(suggestion.replace(re, ''))
     }
     if (position) this._updatePosition(position)
     if (visibility) this._updateVisibility(visibility)
