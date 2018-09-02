@@ -12,6 +12,7 @@ const {
   getAppSizeIO,
   getFromStoreIO,
   getCursorOffsetIO,
+  getMaxZIndexIO,
   updateTextNodeIO,
   focusEventTargetIO,
   dispatchActionIO,
@@ -61,6 +62,9 @@ module.exports = {
     const getOffsetVal = getCursorOffsetIO(e.target, pageScroll, spacePosition)
     return readToCtx(getOffsetVal, 'offset', ctx)
   }),
+  getMaxZIndex: ctx => {
+    return readToCtx(getMaxZIndexIO(), 'maxZIndex', ctx)
+  },
   updateTextNode: curry((el, ctx) => {
     const { textToInsert } = ctx
     const update = updateTextNodeIO(el, textToInsert)

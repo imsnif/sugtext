@@ -11,7 +11,8 @@ const {
   getClientSize,
   updateState,
   updateStateFromCtx,
-  getAppSize
+  getAppSize,
+  getMaxZIndex
 } = require('./pipeline/transforms')
 const {
   calcBoxHorizontalInverse,
@@ -61,6 +62,10 @@ module.exports = (app) => {
     }
   })
   observe('div[contenteditable="true"],textarea', el => {
+    initCtx({})
+      .chain(getMaxZIndex)
+      .chain(updateAppStateFromCtx('maxZIndex', 'maxZIndex'))
+      .cata(console.error, noop)
     el.addEventListener('blur', onBlur)
     el.addEventListener('click', onBlur) // TODO: rename function
     el.addEventListener('keypress', onKeypress)

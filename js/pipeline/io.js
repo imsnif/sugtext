@@ -1,5 +1,6 @@
 const { curry } = require('ramda')
 const { offset } = require('caret-pos')
+const maxz = require('maxz')
 const insertTextAtCursor = require('insert-text-at-cursor')
 const { sendToBackground } = require('../util/msg-bus')
 const updateQueue = require('../util/update-queue')
@@ -58,6 +59,9 @@ module.exports = {
     } else {
       return el.value
     }
+  }),
+  getMaxZIndexIO: () => tryCatchify(() => {
+    return maxz()
   }),
   updateTextNodeIO: curry((el, textToInsert) => tryCatchify(() => {
     if (!el) {

@@ -46,6 +46,7 @@
     "debounce": "^1.2.0",
     "fluture": "^8.0.2",
     "insert-text-at-cursor": "^0.1.1",
+    "maxz": "^1.0.4",
     "monet": "^0.8.10",
     "pouchdb": "^7.0.0",
     "pouchdb-collate": "^7.0.0",

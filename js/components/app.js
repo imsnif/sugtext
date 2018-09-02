@@ -9,8 +9,7 @@ const style = {
   display: 'none',
   backgroundColor: '#7d98a1',
   boxShadow: '0 0 0.2em 0.2em #7d98a1',
-  borderRadius: '2px',
-  zIndex: 10000 // TODO: dynamically
+  borderRadius: '2px'
 }
 
 module.exports = class App {
@@ -22,6 +21,7 @@ module.exports = class App {
       this.completion,
       {style}
     )
+    this.zIndex = 1
   }
   getBoundingClientRect () {
     return this.el.getBoundingClientRect()
@@ -32,9 +32,13 @@ module.exports = class App {
   }
   _updateVisibility (visibility) {
     this.el.style.display = visibility === 'hidden' ? 'none' : 'initial'
+    this.el.style.zIndex = this.zIndex
   }
   update (data) {
-    const { suggestion, position, visibility, searchterm } = data
+    const { suggestion, position, visibility, searchterm, maxZIndex } = data
+    if (maxZIndex) {
+      this.zIndex = maxZIndex + 1
+    }
     if (suggestion) {
       const re = new RegExp(`^${searchterm}`)
       this.searchterm.update(searchterm)
