@@ -253,6 +253,27 @@ t => {
   }
 })
 
+test('UNIT => getMaxZIndex(ctx) => ' +
+  'reads maxZIndex into ctx',
+t => {
+  t.plan(1)
+  try {
+    const ctx = {foo: 'bar'}
+    const getMaxZIndexIO = sinon.stub()
+      .returns(Identity('foo'))
+    const { getMaxZIndex } = getStubbedTransform({getMaxZIndexIO})
+    getMaxZIndex(ctx).map(newCtx => t.deepEquals(
+      newCtx,
+      Object.assign({}, ctx, {maxZIndex: 'foo'}),
+      'maxZIndex merged to ctx'
+    ))
+  } catch (e) {
+    console.error(e.stack)
+    t.fail(e)
+    t.end()
+  }
+})
+
 test('UNIT => updateTextNode(el, ctx) => ' +
   'updates text node and returns ctx',
 t => {

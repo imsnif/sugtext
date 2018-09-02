@@ -7,6 +7,7 @@ function getStubbedIo (stubs) {
     getSelection, pageXOffset, pageYOffset, scrollLeft, scrollTop,
     clientWidth, clientHeight,
     offset,
+    maxz,
     insertTextAtCursor,
     dispatch,
     updateQueue,
@@ -30,6 +31,7 @@ function getStubbedIo (stubs) {
   }
   return proxyquire('../../js/pipeline/io', {
     'caret-pos': {offset},
+    'maxz': maxz || {},
     'insert-text-at-cursor': insertTextAtCursor || {},
     '../util/dispatch': {dispatch},
     '../util/update-queue': updateQueue || {},
@@ -358,6 +360,27 @@ test(
             'value resolved properly'
           ),
           () => t.fail('io resolved on failure')
+        )
+    } catch (e) {
+      console.error(e.stack)
+      t.fail(e)
+      t.end()
+    }
+  }
+)
+
+test(
+  'UNIT => getMaxZIndexIO(el) => ' +
+  'returns element value',
+  t => {
+    t.plan(1)
+    try {
+      const maxz = sinon.stub().returns('foo')
+      const { getMaxZIndexIO } = getStubbedIo({maxz})
+      getMaxZIndexIO()
+        .cata(
+          e => t.fail('io failed', e),
+          val => t.equals(val, 'foo', 'value resolved properly')
         )
     } catch (e) {
       console.error(e.stack)

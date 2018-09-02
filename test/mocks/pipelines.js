@@ -84,6 +84,7 @@ module.exports = {
       getStoreKeyValue: currySpy((store, key, ctx) => Right(merge(ctx, {[key]: store.get(key)}))),
       getClientSize: sinon.spy(ctx => Right(ctx)),
       getAppSize: currySpy((app, ctx) => Right(ctx)),
+      getMaxZIndex: sinon.spy(ctx => Right(ctx)),
       updateState: currySpy((app, store, type, val, ctx) => Right(ctx)),
       updateStateFromCtx: currySpy((app, store, ctxKey, key, ctx) => Right(ctx))
     }

@@ -150,7 +150,7 @@ test('UNIT => api => suggest => updates app state with suggestion', t => {
 })
 
 test('UNIT => api => observe => DOM element observed properly', t => {
-  t.plan(5)
+  t.plan(8)
   try {
     const observationSelector = 'div[contenteditable="true"],textarea'
     const state = {}
@@ -161,11 +161,25 @@ test('UNIT => api => observe => DOM element observed properly', t => {
       observe,
       onBlur,
       onKeypress,
-      onKeyDown
+      onKeyDown,
+      getMaxZIndex,
+      updateStateFromCtx
     } = stubApi({app, store, el})
     t.ok(
       observe.calledWith(observationSelector),
       'DOM queried for desired elements'
+    )
+    t.ok(
+      getMaxZIndex.calledOnce,
+      'maxZIndex on page found'
+    )
+    t.ok(
+      updateStateFromCtx.calledWith(store, app, 'maxZIndex', 'maxZIndex'),
+      'maxZIndex inserted into state'
+    )
+    t.ok(
+      updateStateFromCtx.calledAfter(getMaxZIndex),
+      'maxZIndex inserted into state only after it was found in page'
     )
     t.ok(
       el.addEventListener.calledWith('blur', onBlur),

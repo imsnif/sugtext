@@ -342,3 +342,19 @@ test('contentEditable - completions are case sensitive (respect existing capital
     t.fail(e.message)
   }
 })
+
+test('contentEditable - suggest completions above zIndex', async t => {
+  t.plan(1)
+  try {
+    const { browser, contentPage } = await loadExtension('one-contenteditable-field-zIndex')
+    const textboxEl = await contentPage.$('#completeme')
+    await textboxEl.type('thi', {delay: 100})
+    const captured = await contentPage.screenshot()
+    const truth = fs.readFileSync(`${screenshotDir}/contenteditable-suggest-completions-zIndex.png`)
+    const matchesScreenshot = await looksSame(truth, captured)
+    t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
+    await browser.close()
+  } catch (e) {
+    t.fail(e.message)
+  }
+})
