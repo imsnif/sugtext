@@ -135,6 +135,26 @@ test('textarea - ESC removes box', async t => {
   }
 })
 
+test('textarea - suggest completions at the beginning of a text field with multiple lines', async t => {
+  t.plan(1)
+  try {
+    const { browser, contentPage } = await loadExtension('one-textarea-field')
+    const textboxEl = await contentPage.$('#completeme')
+    await textboxEl.type('foo thi bar', {delay: 100})
+    await textboxEl.press('Enter', {delay: 100})
+    await textboxEl.press('Enter', {delay: 100})
+    await textboxEl.press('Enter', {delay: 100})
+    await textboxEl.type('thia', {delay: 100})
+    const captured = await contentPage.screenshot()
+    const truth = fs.readFileSync(`${screenshotDir}/textarea-suggest-completions-multiline-beginning.png`)
+    const matchesScreenshot = await looksSame(truth, captured)
+    t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
+    await browser.close()
+  } catch (e) {
+    t.fail(e.message)
+  }
+})
+
 test('textarea - suggest completions in the middle of a text field with multiple lines', async t => {
   t.plan(1)
   try {
