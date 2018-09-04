@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
   "name": "sugtext",
-  "version": "1.4",
-  "description": "Autocompletes text in textAreas",
+  "version": "1.5",
+  "description": "Autocompletes text as you type",
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
