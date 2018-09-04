@@ -230,7 +230,7 @@ test('textarea - suggestion box respects vertical screen border', async t => {
     for (let i = 0; i < 11; i++) {
       await textboxEl.press('Enter')
     }
-    await textboxEl.type(' thia', {delay: 100})
+    await textboxEl.type('th', {delay: 100})
     const captured = await contentPage.screenshot()
     const truth = fs.readFileSync(`${screenshotDir}/textarea-suggest-overflow-vertical.png`)
     const matchesScreenshot = await looksSame(truth, captured)
