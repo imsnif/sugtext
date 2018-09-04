@@ -24,7 +24,17 @@ module.exports = class App {
     this.zIndex = 1
   }
   getBoundingClientRect () {
-    return this.el.getBoundingClientRect()
+    const origDisplay = this.el.style.display
+    const origSearchterm = this.searchterm.word
+    if (!origSearchterm) {
+      // so that the box has minimal size
+      this.searchterm.update('W')
+    }
+    this.el.style.display = 'initial'
+    const rect = this.el.getBoundingClientRect()
+    this.el.style.display = origDisplay
+    this.searchterm.update(origSearchterm)
+    return rect
   }
   _updatePosition (position) {
     this.el.style.left = `${Number(position.left)}px`

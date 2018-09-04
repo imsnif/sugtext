@@ -15,8 +15,10 @@ class Word {
   constructor (props) {
     this.el = el('span')
     this.type = props.type
+    this.word = null
   }
   update (word) {
+    this.word = word
     if (!word) {
       this.el.textContent = ''
       this.el.style.visibility = 'hidden'
