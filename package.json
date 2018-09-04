@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@redom/store": "~1.0.0",
-    "caret-pos": "^1.2.0",
+    "caret-pos": "^1.2.1",
     "debounce": "^1.2.0",
     "fluture": "^8.0.2",
     "insert-text-at-cursor": "^0.1.1",
