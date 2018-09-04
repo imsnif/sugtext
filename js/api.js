@@ -1,5 +1,6 @@
 const uuid = require('uuid/v4')
 const { Identity } = require('monet')
+const debounce = require('debounce')
 
 const { listen } = require('./util/dispatch')
 const listeners = require('./listeners')
@@ -28,6 +29,12 @@ module.exports = (app) => {
   const id = uuid()
   const updateAppState = updateState(store, app)
   const updateAppStateFromCtx = updateStateFromCtx(store, app)
+  const updateMaxZIndex = debounce(() => {
+    initCtx({})
+      .chain(getMaxZIndex)
+      .chain(updateAppStateFromCtx('maxZIndex', 'maxZIndex'))
+      .cata(console.error, noop)
+  }, 100)
   const {
     onKeyDown,
     onBlur,
@@ -62,10 +69,7 @@ module.exports = (app) => {
     }
   })
   observe('div[contenteditable="true"],textarea', el => {
-    initCtx({})
-      .chain(getMaxZIndex)
-      .chain(updateAppStateFromCtx('maxZIndex', 'maxZIndex'))
-      .cata(console.error, noop)
+    updateMaxZIndex()
     el.addEventListener('blur', onBlur)
     el.addEventListener('click', onBlur) // TODO: rename function
     el.addEventListener('keypress', onKeypress)

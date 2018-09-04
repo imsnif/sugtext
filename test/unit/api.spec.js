@@ -149,7 +149,7 @@ test('UNIT => api => suggest => updates app state with suggestion', t => {
   }
 })
 
-test('UNIT => api => observe => DOM element observed properly', t => {
+test('UNIT => api => observe => DOM element observed properly', async t => {
   t.plan(8)
   try {
     const observationSelector = 'div[contenteditable="true"],textarea'
@@ -165,6 +165,7 @@ test('UNIT => api => observe => DOM element observed properly', t => {
       getMaxZIndex,
       updateStateFromCtx
     } = stubApi({app, store, el})
+    await new Promise(resolve => setTimeout(resolve, 100)) // debounce timeout
     t.ok(
       observe.calledWith(observationSelector),
       'DOM queried for desired elements'
