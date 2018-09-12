@@ -42,8 +42,8 @@ module.exports = {
         : {customPos: spacePosition, noShadowCaret: true}
     )
     return Object.assign({}, elOffset, {
-      left: elOffset.left - pageScroll.x - el.scrollLeft, // TODO: different io
-      top: elOffset.top - pageScroll.y - el.scrollTop
+      left: elOffset.left - pageScroll.x,
+      top: elOffset.top - pageScroll.y
     })
   })),
   getSelectedTextareaCurPosIO: el => tryCatchify(() => {

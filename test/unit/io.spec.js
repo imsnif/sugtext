@@ -221,8 +221,8 @@ test(
         .cata(
           e => t.fail('io failed'),
           offset => t.deepEquals(offset, Object.assign({}, elOffset, {
-            left: elOffset.left - pageScroll.x - el.scrollLeft,
-            top: elOffset.top - pageScroll.y - el.scrollTop
+            left: elOffset.left - pageScroll.x,
+            top: elOffset.top - pageScroll.y
           }), 'offset properly merged')
         )
     } catch (e) {
@@ -262,8 +262,8 @@ test(
         .cata(
           e => t.fail('io failed'),
           offset => t.deepEquals(offset, Object.assign({}, elOffset, {
-            left: elOffset.left - pageScroll.x - el.scrollLeft,
-            top: elOffset.top - pageScroll.y - el.scrollTop
+            left: elOffset.left - pageScroll.x,
+            top: elOffset.top - pageScroll.y
           }), 'offset properly merged')
         )
     } catch (e) {
