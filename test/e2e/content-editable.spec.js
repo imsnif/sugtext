@@ -237,6 +237,44 @@ test('contentEditable - suggest completions when scrolled down', async t => {
   }
 })
 
+test('contentEditable - suggest completions when scrolled down inside field', async t => {
+  t.plan(1)
+  try {
+    const { browser, contentPage } = await loadExtension('one-contenteditable-field-overflow-down')
+    const textboxEl = await contentPage.$('#completeme')
+    for (let i = 0; i < 15; i++) {
+      await textboxEl.press('Enter')
+    }
+    await textboxEl.type('thi', {delay: 100})
+    const captured = await contentPage.screenshot()
+    const truth = fs.readFileSync(`${screenshotDir}/contenteditable-suggest-completions-overflow-down.png`)
+    const matchesScreenshot = await looksSame(truth, captured)
+    t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
+    await browser.close()
+  } catch (e) {
+    t.fail(e.message)
+  }
+})
+
+test('contentEditable - suggest completions when scrolled down in both page and field', async t => {
+  t.plan(1)
+  try {
+    const { browser, contentPage } = await loadExtension('one-contenteditable-field-vert-scroll-overflow')
+    const textboxEl = await contentPage.$('#completeme')
+    for (let i = 0; i < 15; i++) {
+      await textboxEl.press('Enter')
+    }
+    await textboxEl.type('thi', {delay: 100})
+    const captured = await contentPage.screenshot()
+    const truth = fs.readFileSync(`${screenshotDir}/contenteditable-suggest-completions-vert-scroll-overflow.png`)
+    const matchesScreenshot = await looksSame(truth, captured)
+    t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
+    await browser.close()
+  } catch (e) {
+    t.fail(e.message)
+  }
+})
+
 test('contentEditable - suggest completions when scrolled right', async t => {
   t.plan(1)
   try {
