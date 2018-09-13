@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "sugtext",
-  "version": "1.5",
+  "version": "1.7",
   "description": "Autocompletes text as you type",
   "content_scripts": [
     {
