@@ -5,9 +5,14 @@ const fs = require('fs')
 const { promisify } = require('util')
 const looksSame = promisify(require('looks-same'))
 
-const { loadExtension } = require('../utils')
+const { getBrowser, loadExtension } = require('../utils')
 
 const screenshotDir = `${__dirname}/../screenshots`
+
+test.onFinish(async () => {
+  const browser = getBrowser()
+  await browser.close()
+})
 
 test('contentEditable - suggest completions', async t => {
   t.plan(1)
@@ -19,7 +24,7 @@ test('contentEditable - suggest completions', async t => {
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-suggest-completions.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-    await browser.close()
+    // await browser.close()
   } catch (e) {
     t.fail(e.message)
   }
@@ -39,7 +44,7 @@ test('contentEditable - suggest completions in the middle of a text field', asyn
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-suggest-completions-middle.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-    await browser.close()
+    // await browser.close()
   } catch (e) {
     t.fail(e.message)
   }
@@ -56,7 +61,7 @@ test('contentEditable - complete word when pressing TAB', async t => {
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-complete-first-word.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-    await browser.close()
+    // await browser.close()
   } catch (e) {
     t.fail(e.message)
   }
@@ -77,7 +82,7 @@ test('contentEditable - complete first words when pressing TAB in the middle of 
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-complete-first-word-middle.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-    await browser.close()
+    // await browser.close()
   } catch (e) {
     t.fail(e.message)
   }
@@ -93,7 +98,7 @@ test('contentEditable - space causes suggestion box to disappear', async t => {
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-space-disappears.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-    await browser.close()
+    // await browser.close()
   } catch (e) {
     t.fail(e.message)
   }
@@ -112,7 +117,7 @@ test('contentEditable - combinations cause box to disappear', async t => {
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-combination.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-    await browser.close()
+    // await browser.close()
   } catch (e) {
     t.fail(e.message)
   }
@@ -129,7 +134,7 @@ test('contentEditable - ESC removes box', async t => {
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-esc.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-    await browser.close()
+    // await browser.close()
   } catch (e) {
     t.fail(e.message)
   }
@@ -153,7 +158,7 @@ test('contentEditable - suggest completions in the middle of a text field with m
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-suggest-completions-multiline.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-    await browser.close()
+    // await browser.close()
   } catch (e) {
     t.fail(e.message)
   }
@@ -162,7 +167,7 @@ test('contentEditable - suggest completions in the middle of a text field with m
 test('contentEditable - complete first word when pressing TAB in the middle of a text field with multiple lines', async t => {
   t.plan(1)
   try {
-    const { browser, contentPage } = await loadExtension('one-contenteditable-field')
+    const { browser, contentPage, backgroundPage } = await loadExtension('one-contenteditable-field')
     const textboxEl = await contentPage.$('#completeme')
     for (let i = 0; i < 3; i++) {
       await textboxEl.type('foo thi bar', {delay: 100})
@@ -178,7 +183,9 @@ test('contentEditable - complete first word when pressing TAB in the middle of a
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-complete-first-word-multiline.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-    await browser.close()
+    await contentPage.close()
+    await backgroundPage.close()
+    // await browser.close()
   } catch (e) {
     t.fail(e.message)
   }
@@ -187,15 +194,20 @@ test('contentEditable - complete first word when pressing TAB in the middle of a
 test('contentEditable - suggestion box respects horizontal screen border', async t => {
   t.plan(1)
   try {
-    const { browser, contentPage } = await loadExtension('one-contenteditable-field')
-    await contentPage.setViewport({width: 200, height: 500})
+    const viewport = {width: 200, height: 500}
+    const { browser, contentPage } = await loadExtension(
+      'one-contenteditable-field',
+      {viewport}
+    )
+    // await contentPage.setViewport({width: 200, height: 500})
     const textboxEl = await contentPage.$('#completeme')
     await textboxEl.type('I am some text that will overflow thia', {delay: 100})
     const captured = await contentPage.screenshot()
+    fs.writeFileSync('/tmp/captured.png', captured)
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-suggest-overflow-horizontal.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-    await browser.close()
+    // await browser.close()
   } catch (e) {
     t.fail(e.message)
   }
@@ -215,7 +227,7 @@ test('contentEditable - suggestion box respects vertical screen border', async t
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-suggest-overflow-vertical.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-    await browser.close()
+    // await browser.close()
   } catch (e) {
     t.fail(e.message)
   }
@@ -231,7 +243,7 @@ test('contentEditable - suggest completions when scrolled down', async t => {
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-suggest-completions-vert-scroll.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-    await browser.close()
+    // await browser.close()
   } catch (e) {
     t.fail(e.message)
   }
@@ -250,7 +262,7 @@ test('contentEditable - suggest completions when scrolled down inside field', as
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-suggest-completions-overflow-down.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-    await browser.close()
+    // await browser.close()
   } catch (e) {
     t.fail(e.message)
   }
@@ -269,7 +281,7 @@ test('contentEditable - suggest completions when scrolled down in both page and 
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-suggest-completions-vert-scroll-overflow.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-    await browser.close()
+    // await browser.close()
   } catch (e) {
     t.fail(e.message)
   }
@@ -285,7 +297,7 @@ test('contentEditable - suggest completions when scrolled right', async t => {
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-suggest-completions-horiz-scroll.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-    await browser.close()
+    // await browser.close()
   } catch (e) {
     t.fail(e.message)
   }
@@ -304,7 +316,7 @@ test('contentEditable - prefer new words (previously failed to complete) when su
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-prefer-new-words.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-    await browser.close()
+    // await browser.close()
   } catch (e) {
     t.fail(e.message)
   }
@@ -323,7 +335,7 @@ test('contentEditable - trim punctuation at end of previously failed to complete
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-prefer-new-words-trimmed.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-    await browser.close()
+    // await browser.close()
   } catch (e) {
     t.fail(e.message)
   }
@@ -339,7 +351,7 @@ test('contentEditable - suggestions are case insensitive (always lowercase)', as
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-suggest-case-insensitive.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-    await browser.close()
+    // await browser.close()
   } catch (e) {
     t.fail(e.message)
   }
@@ -358,7 +370,7 @@ test('contentEditable - new inserted words are case insensitive (always lowercas
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-new-words-case-insensitive.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-    await browser.close()
+    // await browser.close()
   } catch (e) {
     t.fail(e.message)
   }
@@ -375,7 +387,7 @@ test('contentEditable - completions are case sensitive (respect existing capital
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-complete-case-sensitive.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-    await browser.close()
+    // await browser.close()
   } catch (e) {
     t.fail(e.message)
   }
@@ -391,7 +403,7 @@ test('contentEditable - suggest completions above zIndex', async t => {
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-suggest-completions-zIndex.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-    await browser.close()
+    // await browser.close()
   } catch (e) {
     t.fail(e.message)
   }
