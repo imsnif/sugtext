@@ -22,14 +22,18 @@ function bundle (path) {
   })
 }
 
+let browser, backgroundBundle, contentBundle
+
 module.exports = {
+  getBrowser: () => browser,
   async loadExtension (fixture) {
-    const browser = await puppeteer.launch({args: ['--no-sandbox']})
-    const backgroundPage = await browser.newPage()
-    const contentPage = await browser.newPage()
+    browser = browser || await puppeteer.launch({args: ['--no-sandbox']})
+    const context = await browser.createIncognitoBrowserContext()
+    const backgroundPage = await context.newPage()
+    const contentPage = await context.newPage()
     backgroundPage.on('console', msg => console.log('BACKGROUND-PAGE LOG:', msg.text()))
     backgroundPage.on('pageerror', err => console.error('BACKGROUND-PAGE ERROR:', err.toString()))
-    await backgroundPage.goto('https://example.com')
+    await backgroundPage.goto(`file://${__dirname}/../fixtures/${fixture}/index.html`)
     contentPage.on('console', msg => console.log('CONTENT-PAGE LOG:', msg.text()))
     contentPage.on('pageerror', err => console.error('CONTENT-PAGE ERROR:', err.toString()))
     await backgroundPage.addScriptTag({path: `${__dirname}/../mocks/stub-firefox-background.js`})
@@ -43,8 +47,8 @@ module.exports = {
         func(...msg)
       }), ...msg)
     })
-    const backgroundBundle = await bundle(`${__dirname}/../../js/background.js`)
-    const contentBundle = await bundle(`${__dirname}/../../js/index.js`)
+    backgroundBundle = backgroundBundle || await bundle(`${__dirname}/../../js/background.js`)
+    contentBundle = contentBundle || await bundle(`${__dirname}/../../js/index.js`)
     await backgroundPage.addScriptTag({content: backgroundBundle})
     await contentPage.addScriptTag({content: contentBundle})
     return { browser, backgroundPage, contentPage }
