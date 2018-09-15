@@ -170,8 +170,6 @@ test('contentEditable - complete first word when pressing TAB in the middle of a
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-complete-first-word-multiline.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
-    await contentPage.close()
-    await backgroundPage.close()
   } catch (e) {
     t.fail(e.message)
   }
@@ -185,7 +183,6 @@ test('contentEditable - suggestion box respects horizontal screen border', async
     const textboxEl = await contentPage.$('#completeme')
     await textboxEl.type('I am some text that will overflow thia', {delay: 100})
     const captured = await contentPage.screenshot()
-    fs.writeFileSync('/tmp/captured.png', captured)
     const truth = fs.readFileSync(`${screenshotDir}/contenteditable-suggest-overflow-horizontal.png`)
     const matchesScreenshot = await looksSame(truth, captured)
     t.ok(matchesScreenshot, 'captured screenshot matches saved screenshot')
