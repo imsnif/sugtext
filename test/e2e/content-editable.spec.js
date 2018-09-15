@@ -154,7 +154,7 @@ test('contentEditable - suggest completions in the middle of a text field with m
 test('contentEditable - complete first word when pressing TAB in the middle of a text field with multiple lines', async t => {
   t.plan(1)
   try {
-    const { contentPage, backgroundPage } = await loadExtension('one-contenteditable-field')
+    const { contentPage } = await loadExtension('one-contenteditable-field')
     const textboxEl = await contentPage.$('#completeme')
     for (let i = 0; i < 3; i++) {
       await textboxEl.type('foo thi bar', {delay: 100})
